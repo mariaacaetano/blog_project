@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static%}
+
+{% block content %} 
+<style>
+    .link-estilo {
+        color: blue; /* Define a cor do link */
+        text-decoration: none; /* Remove o sublinhado */
+    }
+
+    .link-estilo:hover {
+        text-decoration: underline; /* Adiciona sublinhado ao passar o mouse */
+    }
+
+</style>
+
+<div style="text-align: center; margin-top: 20px;">
+    {% if form.errors %}
+        <div style="color: red;">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; gap: 20px;">
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <div style="padding: 30px; margin: 50px; background-color: #FFF0F5  ; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 400px;">   
+            <h2 style="font-family: serif; text-align: center;">Sign Up</h2>
+            <form method="POST" style="font-family: serif;" id="signupForm">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div id="message" style="color: red; margin-bottom: 10px;"></div>
+                <div style="text-align: center;">
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; height: 500px; background-color: #FFFFE0; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <img src="{% static 'images/box_of_good_good.png' %}" alt="Logo" style="width: 80px; height: 80px;" id="soundImage">
+            <h4 style="margin-bottom: 10px; text-align: center;">Já tem uma conta?</h4>
+            <p style="text-align: center;">
+                <a href="{% url 'login' %}" style="color: orange; text-decoration: none;">Clique aqui</a>
+            </p>
+    </div>
+</div>
+
+
+<script>
+    // Função para validar campos em tempo real
+    document.getElementById('signupForm').addEventListener('input', function() {
+        const username = document.getElementById('id_username').value;
+        const password = document.getElementById('id_password').value;
+        const confirmPassword = document.getElementById('id_confirm_password').value;
+        const messageDiv = document.getElementById('message');
+        let messages = [];
+
+        if (username.length < 4) {
+            messages.push("O nome de usuário deve ter pelo menos 4 caracteres.");
+        }
+
+        if (password.length < 6) {
+            messages.push("A senha deve ter pelo menos 6 caracteres.");
+        }
+
+        if (password !== confirmPassword) {
+            messages.push("As senhas não coincidem.");
+        }
+
+        messageDiv.innerHTML = messages.join('<br>');
+    });
+</script>
+{% endblock content %}
