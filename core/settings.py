@@ -19,6 +19,9 @@ STATIC_DIR=os.path.join('/static/')
 
 # faz a box_of_good_good.png funcionar
 STATICFILES_DIRS = os.path.join(BASE_DIR,'static'),
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+AUTH_USER_MODEL = 'accounts.BlogUser'  # Ajuste 'accounts' para o nome do seu aplicativo
 
 # config/settings.py
 LOGIN_REDIRECT_URL = 'post-list'
@@ -48,6 +51,8 @@ INSTALLED_APPS = [
     'posts_app',
     'accounts',
     'widget_tweaks',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
@@ -127,8 +132,8 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR,'/static')
 STATIC_URL = '/static/' 
 
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'  # Adicione esta linha se ainda não estiver presente
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Certifique-se de que isso está definido
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -143,4 +148,24 @@ MESSAGE_TAGS = {
         messages.SUCCESS: 'alert-success',
         messages.WARNING: 'alert-warning',
         messages.ERROR: 'alert-danger',
- }
+}
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            {'name': 'document', 'items': ['Source', 'Save', 'NewPage', 'Preview', 'Print']},
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': ['Find', 'Replace', 'SelectAll']},
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript']},
+            {'name': 'paragraph', 'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {'name': 'insert', 'items': ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
+            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
+            {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
+            {'name': 'about', 'items': ['About']},
+        ],
+        'height': 300,
+        'removePlugins': 'elementspath',
+        'resize_enabled': False,
+    }
+}

@@ -1,25 +1,25 @@
 {% extends 'base.html' %}
 
-{% block title %}Lista Postagens{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
 	<!-- <a class="btn btn-success" href="{% url 'post-create' %}">Criar um Post</a> -->
 
 	<div class="jumbotron p-2 p-md-5 text-white rounded bg-dark text-center">
 		<div class="col-md-8 mx-auto px-0">
-			<h1 class="display-4 font-italic">Bem-vindo ao Box of Good Good.</h1>
-			<p class="lead my-3">
+			<h1 class="display-4 font-italic" style="font-family: serif; font-size: 40px">Bem-vindo ao Django Blog Project.</h1>
+			<p class="lead my-3" style="font-family: serif">
 				Este projeto é apresentado como avaliação parcial para a disciplina de Desenvolvimento Web II, 
 				ministrada pelo Professor Doutor Paulo Cesar F. de Oliveira, no curso de Bacharelado em Sistemas de Informação 
 				do Instituto Federal Catarinense - Campus Araquari.
 			</p>
 
 			<div class="container-fluid" style="padding: 20px; margin: 40">
-				<div class="jumbotron custom-jumbotron text-black rounded bg-white text-center" id="navbarSupportedContent">
+				<div class="jumbotron custom-jumbotron text-black rounded bg-white text-center" id="navbarSupportedContent" style="font-family: serif">
 					{% if user.is_authenticated %}
 						<span class="navbar-text nav-item username-text">Olá, {{ user.username }}!</span>    
 					{% else %}
-						<span class="navbar-text nav-item username-text">Você ainda não está logado. É novo por aqui? <a href="{% url 'signup' %}">Clique aqui.</a></span>
+						<span class="navbar-text nav-item username-text">Você não está logado ainda. É novo por aqui? <a href="{% url 'signup' %}">Clique aqui.</a></span>
 					{% endif %}
 				</div>
 			</div>
@@ -31,16 +31,21 @@
 				{% for post in posts %} 
 				<div class="col">
 					<div class="card h-100 text-bg-light">
-						<img src="{{post.image.url}}" class="card-img-top" alt="{{post.title}}">
+						<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="width: 100%; height: 150px; object-fit: cover;">
 						<div class="card-body">
-							<p class="card-text">{{post.title}}</p>
-							<a class="btn btn-info" href="{% url 'post-detail' post.id %}">Ver</a>
+							{% if post.tag.tag_name == "EDUCAÇÃO" %}
+								<p class="card-text" style="font-size: 13px; color: red"><strong>{{ post.tag }}</strong></p>
+							{% elif post.tag.tag_name == "ENTRETENIMENTO" %}
+								<p class="card-text" style="font-size: 13px; color: green"><strong>{{ post.tag }}</strong></p>
+							{% endif %}
+							<h3 class="card-text" style="font-family: serif"><strong>{{ post.title }}</strong></h3>
+							<p class="card-text" style="font-family: serif; font-size:13px">{{ post.create_at }}</p>
+							<p class="card-text" style="font-family: serif; font-size: 15px">{{ post.description|slice:":100" }}...</p>
+							<a class="btn btn-secondary" href="{% url 'post-detail' post.id %}" style="font-family: serif; font-size: 15px;">Leia Mais</a>
 						</div>
 					</div> 
 				</div>
 				{% endfor %} 
 			</div>	 
 	</div>
-
-	<a class="nav-link" href="{% url 'post-create' %}">New Post</a>
 {% endblock content %}

@@ -20,6 +20,14 @@ def post_list(request):
         }
     return render(request, template_name, context) # render
 
+def educacao_list(request):
+    template_name = 'post_pages/educacao.html'  # Nome do template
+    posts = Posts.objects.filter(tag__tag_name="EDUCAÇÃO")  # Filtra postagens pela tag "EDUCAÇÃO"
+    context = {  # Context para chamar no template
+        'posts': posts
+    }
+    return render(request, template_name, context)  # Renderiza a página com o contexto
+
 
 def post_create(request):
     if request.method == 'POST': # para metodo POST
@@ -45,15 +53,16 @@ def post_detail(request, id):
 
 
 def post_update(request, id):
-    post = get_object_or_404(Posts, id=id) # id do post
-    form = PostsForm(request.POST or None, request.FILES or None, instance=post) # pega as informações do form
-    if form.is_valid(): # se for valido
-        form.save() # salva
+    post = get_object_or_404(Posts, id=id)  # Obtém o post com o ID fornecido
+    form = PostsForm(request.POST or None, request.FILES or None, instance=post)  # Preenche o formulário com os dados do post
+
+    if form.is_valid():  # Verifica se o formulário é válido
+        form.save()  # Salva as alterações no post
         
-        messages.warning(request, 'O post foi atualizado com sucesso') # mensagem quando cria o post
-        return HttpResponseRedirect(reverse('post-detail', args=[post.id])) # coloquei para retornar post-list
-         
-    return render(request, 'post-form.html', {"form": form}) # nesse template
+        messages.success(request, 'O post foi atualizado com sucesso')  # Mensagem de sucesso
+        return HttpResponseRedirect(reverse('post-detail', args=[post.id]))  # Redireciona para a página de detalhes do post
+        
+    return render(request, 'post-form.html', {"form": form, "post": post})  # Renderiza o formulário se não for um POST válido
 
 
 def post_delete(request, id):

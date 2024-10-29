@@ -1,7 +1,13 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import BlogUser
 
 class SignUpForm(forms.ModelForm):
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    birth_date = forms.DateField()
+    username = forms.CharField()
+    email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
 
