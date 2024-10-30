@@ -17,7 +17,7 @@
 			<div class="container-fluid" style="padding: 20px; margin: 40">
 				<div class="jumbotron custom-jumbotron text-black rounded bg-white text-center" id="navbarSupportedContent" style="font-family: serif">
 					{% if user.is_authenticated %}
-						<span class="navbar-text nav-item username-text">Olá, {{ user.username }}!</span>    
+						<span class="navbar-text nav-item username-text">Olá, {{ user.first_name }}!</span>    
 					{% else %}
 						<span class="navbar-text nav-item username-text">Você não está logado ainda. É novo por aqui? <a href="{% url 'signup' %}">Clique aqui.</a></span>
 					{% endif %}

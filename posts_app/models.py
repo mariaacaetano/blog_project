@@ -5,7 +5,7 @@ from ckeditor.fields import RichTextField  # Certifique-se de que isso está cor
 # Create your models here.
 class Posts(models.Model):
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    description = RichTextField()
     image = models.ImageField(upload_to='images/')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     create_at = models.DateTimeField(auto_now_add=True)

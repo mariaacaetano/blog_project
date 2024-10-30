@@ -3,17 +3,17 @@ from django.contrib.auth.models import User
 from .models import BlogUser
 
 class SignUpForm(forms.ModelForm):
-    first_name = forms.CharField()
-    last_name = forms.CharField()
-    birth_date = forms.DateField()
-    username = forms.CharField()
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+    username = forms.CharField(label='Usuário', max_length=150)
+    first_name = forms.CharField(label='Nome', max_length=30)
+    last_name = forms.CharField(label='Sobrenome', max_length=30)
+    email = forms.EmailField(label='Email')
+    birth_date = forms.DateField(label='Data de Nascimento', widget=forms.SelectDateWidget())
+    password = forms.CharField(label='Senha', widget=forms.PasswordInput())
+    confirm_password = forms.CharField(label='Confirmar Senha', widget=forms.PasswordInput())
 
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
+        model = BlogUser  # Utilize o modelo BlogUser para capturar os campos extras
+        fields = ['first_name', 'last_name', 'birth_date', 'username', 'email', 'password']  # Inclua todos os campos relevantes
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
@@ -28,3 +28,5 @@ class SignUpForm(forms.ModelForm):
 
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError("As senhas não coincidem.")
+        
+        return cleaned_data

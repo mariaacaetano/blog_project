@@ -4,3 +4,4 @@ Pillow
 sqlparse
 tzdata
 django-widget-tweaks
+django-ckeditor
