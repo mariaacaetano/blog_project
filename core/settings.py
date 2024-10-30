@@ -150,9 +150,23 @@ MESSAGE_TAGS = {
         messages.ERROR: 'alert-danger',
 }
 
+
 CKEDITOR_CONFIGS = {
     'default': {
+        'toolbar': 'Basic',
+        'height': 300,
+        'width': '100%',
+    },
+    'custom': {
+        'skin': 'moono-lisa',
         'toolbar': 'Custom',
+        'height': 300,
+        'width': '100%',
+        'filebrowserWindowWidth': 940,
+        'filebrowserWindowHeight': 725,
+        'removePlugins': 'elementspath',
+        'resize_enabled': False,
+        'language': 'pt-br',
         'toolbar_Custom': [
             {'name': 'document', 'items': ['Source', 'Save', 'NewPage', 'Preview', 'Print']},
             {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'Undo', 'Redo']},
@@ -162,10 +176,7 @@ CKEDITOR_CONFIGS = {
             {'name': 'insert', 'items': ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']},
             {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize']},
             {'name': 'tools', 'items': ['Maximize', 'ShowBlocks']},
-            {'name': 'about', 'items': ['About']},
-        ],
-        'height': 300,
-        'removePlugins': 'elementspath',
-        'resize_enabled': False,
+            {'name': 'about', 'items': ['About']}
+        ]
     }
 }
