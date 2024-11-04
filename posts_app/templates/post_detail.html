@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes Postagem{% endblock %}
+
+{% block content %}
+	<div class="text-center">
+		<h1>{{post.title}}</h1>
+		<p>{{post.create_at}}</p> 
+
+		<div class="image-container" style="border-bottom: 30px; padding-bottom: 20px">
+			<img src="{{post.image.url}}" width="400" alt="{{post.title}}">
+		</div>
+		
+		{{post.description | safe}}
+		<p><strong>Author:</strong> @{{post.author}}</p>
+		{% if post.author == request.user or post.author.is_staff %}
+			<a class="btn btn-info" href="{% url 'post_update' post.id %}">Atualizar</a>
+			<a class="btn btn-danger" href="{% url 'post_delete' post.id %}">Deletar</a>
+		{%endif%}
+	</div>
+	<h2>Comentários</h2>
+<div>
+    {% for comment in comments %}
+        <div>
+            <strong>@{{ comment.author.username }}</strong>
+            <p style="font-size: 10px">{{ comment.create_at }}</p>
+            <div style="background-color: #d1d1d1; width: 600px; border-radius: 7px;">
+                <p style="padding: 5px">{{ comment.body|safe }}</p>
+
+                {% if request.user == comment.author or request.user.is_staff %}
+                    <form method="POST" action="{% url 'comment_delete' comment.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <p>Não há comentários ainda.</p>
+    {% endfor %}
+</div>
+
+<h3>Adicionar um Comentário</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit" class="btn btn-primary">Enviar Comentário</button>
+</form>
+
+{% block extra_js %}
+    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('id_body'); // Altere 'id_body' pelo ID do campo de corpo do comentário
+    </script>
+{% endblock extra_js %}
+
+{% endblock content %}

@@ -1,18 +1,28 @@
 {% load static %}
 
-<body style="font-family: serif; font-size: 18px"> 
-    <div class="jumbotron rounded bg-light text-center" style="padding: 10px">
-        <h4 style="font-family: serif"> Painel Administrador</h4>
-        <div class="container" style="display: flex; justify-content: center; align-items: center;">
-            <div style="padding-left: 10px">
-                <a class="btn btn-sm btn-outline-secondary" href="{% url 'post-create' %}" style="font-family: serif">Meu Perfil</a>
-            </div>
-            <div style="padding-left: 10px">
-                <a class="btn btn-sm btn-outline-secondary" href="{% url 'post-create' %}" style="font-family: serif">Novo Post</a>
-            </div>
-            <div style="padding-left: 10px">
-                <a class="btn btn-sm btn-outline-secondary" href="{% url 'post-create' %}" style="font-family: serif">Configurações</a>
+
+{% if user.is_authenticated and user.is_staff %}
+    <div style="font-size: 18px"> 
+        <div class="jumbotron rounded bg-light text-center" style="padding: 10px">
+            <h4> Painel Administrador</h4>
+            <div class="container" style="display: flex; justify-content: center; align-items: center;">
+                <div style="padding-left: 10px">
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'post_create' %}">Meu Perfil</a>
+                </div>
+                <div style="padding-left: 10px">
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'post_create' %}">Novo Post</a>
+                </div>
+                <div style="padding-left: 10px">
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'post_create' %}">Configurações</a>
+                </div>
             </div>
         </div>
     </div>
-</body>
+{% elif user.is_authenticated and not user.is_staff %}
+<div style="font-size: 18px"> 
+    <div class="jumbotron rounded bg-light text-center" style="padding: 10px">
+        <h4> Painel Usuário</h4>
+{% else %}
+<div style="font-size: 18px">
+
+{% endif%}
