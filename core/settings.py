@@ -17,15 +17,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 STATIC_DIR=os.path.join('/static/')
 
-# faz a box_of_good_good.png funcionar
 STATICFILES_DIRS = os.path.join(BASE_DIR,'static'),
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 
-AUTH_USER_MODEL = 'accounts.BlogUser'  # Ajuste 'accounts' para o nome do seu aplicativo
+# AUTH_USER_MODEL = 'accounts.BlogUser'  # Ajuste 'accounts' para o nome do seu aplicativo
 
 # config/settings.py
-LOGIN_REDIRECT_URL = 'post-list'
-LOGOUT_REDIRECT_URL = 'post-list'
+LOGIN_REDIRECT_URL = 'post_list'
+LOGOUT_REDIRECT_URL = 'post_list'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -49,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'posts_app',
-    'accounts',
     'widget_tweaks',
     'ckeditor',
     'ckeditor_uploader',

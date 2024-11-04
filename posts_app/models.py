@@ -26,3 +26,14 @@ class PostTag(models.Model):
     
     def __str__(self):
         return self.tag_name
+    
+
+class Comments(models.Model):
+    body = RichTextField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    create_at = models.DateTimeField(auto_now_add=True)
+    post = models.ForeignKey('Posts', on_delete=models.CASCADE, null=True)
+    
+    def __str__ (self):
+        return self.body
+    
