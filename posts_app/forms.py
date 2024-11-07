@@ -46,11 +46,50 @@ class ProfileForm(forms.ModelForm):
 
 
 class ProfileEditForm(forms.ModelForm):
+    # Adicionando campos para editar informações do usuário
+    username = forms.CharField(max_length=150, disabled=True)  # Tornando o campo 'username' somente leitura
+    first_name = forms.CharField(max_length=30, required=False)
+    last_name = forms.CharField(max_length=30, required=False)
+    email = forms.EmailField(required=True)
+
     class Meta:
         model = Profile
-        fields = ['profile_picture', 'bio', 'date_of_birth', 'favorite_song']
-    
-    # Campo para armazenar a imagem cortada temporariamente
-    cropped_image = forms.ImageField(required=False)
+        fields = ['bio', 'date_of_birth', 'favorite_song']
 
+    def __init__(self, *args, **kwargs):
+        # Passando o usuário atual para o formulário para garantir que o campo 'username' esteja bloqueado
+        self.user = kwargs.pop('user')
+        super(ProfileEditForm, self).__init__(*args, **kwargs)
+        
+        # Preenchendo os campos com os dados do usuário
+        self.fields['username'].initial = self.user.username
+        self.fields['first_name'].initial = self.user.first_name
+        self.fields['last_name'].initial = self.user.last_name
+        self.fields['email'].initial = self.user.email
 
+    def save(self, commit=True):
+        # Salvando as alterações tanto no modelo Profile quanto no modelo User
+        user = self.user
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.email = self.cleaned_data['email']
+        
+        # Salva as mudanças no modelo User
+        if commit:
+            user.save()
+
+        # Agora salvamos as alterações no Profile
+        profile = super().save(commit=False)
+        profile.user = self.user  # Garantir que o perfil está vinculado ao usuário
+        if commit:
+            profile.save()
+        
+        return profile  
+
+class ProfilePictureForm(forms.ModelForm):
+    # Campo de imagem temporário, apenas para upload
+    cropped_image = forms.ImageField(required=True, label="Escolha a imagem cortada")
+
+    class Meta:
+        model = Profile
+        fields = ['profile_picture']  

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Editar Foto do Perfil{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <h1>Editar Foto do Perfil</h1>
+    <form method="post" enctype="multipart/form-data" id="profile-picture-form">
+        {% csrf_token %}
+        {{ form.cropped_image.label_tag }} <!-- Label para a imagem cortada -->
+        {{ form.cropped_image }} <!-- Campo para o upload da imagem cortada -->
+        <button type="submit" class="btn btn-success">Salvar Nova Foto</button>
+    </form>
+
+    <!-- Modal para corte de imagem (com script JavaScript para Cropper.js) -->
+    <div id="cropper-modal" class="modal">
+        <!-- Conteúdo da modal de corte da imagem, similar ao que você já configurou -->
+    </div>
+</div>
+{% endblock %}

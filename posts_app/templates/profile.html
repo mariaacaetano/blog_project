@@ -19,7 +19,12 @@
             <p class="bio">{{ profile.bio }}</p>
             <p><strong>Data de Nascimento:</strong> {{ profile.date_of_birth }}</p>
             <p><strong>Música Favorita:</strong> {{ profile.favorite_song }}</p>
-            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Editar Perfil</a>
+            <a href="{% url 'edit_profile_info' %}">Editar Informações do Perfil</a> |
+            <a href="{% url 'edit_profile_picture' %}">Editar Foto do Perfil</a>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
         </div>
     </div>
     <h3>Posts e Comentários</h3>

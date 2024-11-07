@@ -11,7 +11,7 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.views import generic
 from .models import Posts, Comments, Profile
-from .forms import PostsForm, UserProfileForm, ProfileForm, ProfileEditForm, CommentsForm
+from .forms import PostsForm, UserProfileForm, ProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm
 
 
 # Create your views here.
@@ -173,33 +173,31 @@ def profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     return render(request, 'profile.html', {'profile': profile})
 
+
+
 @login_required
-def edit_profile(request):
-    profile = request.user.profile  # Obtendo o perfil do usuário
-
+def edit_profile_picture(request):
+    profile = request.user.profile
     if request.method == 'POST':
-        form = ProfileEditForm(request.POST, request.FILES, instance=profile)
-
-        # Se a imagem cortada for enviada temporariamente
-        cropped_image = request.FILES.get('cropped_image')
-        if cropped_image:
-            # Armazene a imagem temporariamente, mas não no banco de dados
-            profile.temp_profile_picture = cropped_image
-
+        form = ProfilePictureForm(request.POST, request.FILES)
         if form.is_valid():
-            # Salve a edição do perfil
-            form.save()
-
-            # Se houver uma imagem cortada temporária, salve-a no banco de dados
-            if profile.temp_profile_picture:
-                profile.profile_picture = profile.temp_profile_picture
-                profile.save()
-                # Limpar a imagem temporária após salvar
-                profile.temp_profile_picture.delete()
-
-            return JsonResponse({'new_image_url': profile.profile_picture.url})
-
+            # Use a imagem cortada para atualizar o campo profile_picture do modelo
+            profile.profile_picture = form.cleaned_data['cropped_image']
+            profile.save()
+            return redirect('profile')  # Redireciona para a página de perfil após salvar
     else:
-        form = ProfileEditForm(instance=profile)
+        form = ProfilePictureForm()
 
-    return render(request, 'edit_profile.html', {'form': form, 'profile': profile})
+    return render(request, 'edit_profile_picture.html', {'form': form})
+
+@login_required
+def edit_profile_info(request):
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # Redireciona para a página de visualização do perfil
+    else:
+        form = ProfileEditForm(user=request.user)
+
+    return render(request, 'edit_profile_info.html', {'form': form})

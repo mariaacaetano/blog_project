@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Editar Informações do Perfil{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <h1>Editar Informações do Perfil</h1>
+    <form method="post" id="profile-info-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+    </form>
+</div>
+{% endblock %}
