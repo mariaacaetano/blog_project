@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h1>{{ profile.user.username }}</h1>
+    <div class="profile-header">
+        <div class="profile-picture-wrapper">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="Foto do perfil" class="profile-picture">
+            {% else %}
+                <img src="{% static 'images/default_profile_picture.png' %}" alt="Foto de perfil padrão" class="profile-picture">
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h2>{{ profile.user.get_full_name }}</h2>
+            <p class="bio">{{ profile.bio }}</p>
+            <p><strong>Data de Nascimento:</strong> {{ profile.date_of_birth }}</p>
+            <p><strong>Música Favorita:</strong> {{ profile.favorite_song }}</p>
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Editar Perfil</a>
+        </div>
+    </div>
+    <h3>Posts e Comentários</h3>
+    <!-- Aqui você pode listar os posts e comentários do usuário -->
+</div>
+
+<style>
+    /* Geral */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f7f6;
+        margin: 0;
+        padding: 0;
+    }
+
+    .profile-container {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1, h2, h3 {
+        color: #333;
+    }
+
+    /* Header de perfil */
+    .profile-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .profile-picture-wrapper {
+        flex-shrink: 0;
+        margin-right: 20px;
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        flex-grow: 1;
+        max-width: 600px;
+    }
+
+    .bio {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    /* Botão de editar */
+    .btn {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 20px;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Estilos responsivos */
+    @media (max-width: 768px) {
+        .profile-header {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-info {
+            text-align: center;
+            max-width: 100%;
+        }
+
+        .profile-picture-wrapper {
+            margin-bottom: 15px;
+        }
+
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+        }
+
+        .bio {
+            font-size: 14px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        h1 {
+            font-size: 24px;
+        }
+
+        h2 {
+            font-size: 18px;
+        }
+
+        .profile-info p {
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+        }
+    }
+</style>
+{% endblock %}

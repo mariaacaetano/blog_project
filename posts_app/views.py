@@ -10,8 +10,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.views import generic
-from .models import Posts, Comments
-from .forms import PostsForm, UserProfileForm, CommentsForm
+from .models import Posts, Comments, Profile
+from .forms import PostsForm, UserProfileForm, ProfileForm, ProfileEditForm, CommentsForm
 
 
 # Create your views here.
@@ -86,6 +86,28 @@ def post_update(request, id):
     
     return render(request, 'post_form.html', {"form": form, "post": post})
 
+
+@login_required
+def editar_comentario(request, id):
+    comentario = get_object_or_404(Comments, id=id)
+
+    # Verifica se o usuário é o autor ou um administrador
+    if request.user != comentario.author and not request.user.is_staff:
+        messages.error(request, 'Você não tem permissão para editar este comentário.')
+        return redirect('post_detail', id=comentario.post.id)
+
+    if request.method == 'POST':
+        form = CommentsForm(request.POST, instance=comentario)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Comentário atualizado com sucesso!')
+            return redirect('post_detail', id=comentario.post.id)
+    else:
+        form = CommentsForm(instance=comentario)
+
+    return render(request, 'editar_comentario.html', {'form': form, 'comentario': comentario})
+
+
 @login_required
 def comment_delete(request, id):
     comment = get_object_or_404(Comments, id=id)
@@ -143,3 +165,41 @@ class SignUpView(generic.CreateView):
         login(self.request, user)
         # Redireciona para a página de completar perfil
         return redirect('complete_profile')
+    
+
+
+@login_required
+def profile_view(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    return render(request, 'profile.html', {'profile': profile})
+
+@login_required
+def edit_profile(request):
+    profile = request.user.profile  # Obtendo o perfil do usuário
+
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=profile)
+
+        # Se a imagem cortada for enviada temporariamente
+        cropped_image = request.FILES.get('cropped_image')
+        if cropped_image:
+            # Armazene a imagem temporariamente, mas não no banco de dados
+            profile.temp_profile_picture = cropped_image
+
+        if form.is_valid():
+            # Salve a edição do perfil
+            form.save()
+
+            # Se houver uma imagem cortada temporária, salve-a no banco de dados
+            if profile.temp_profile_picture:
+                profile.profile_picture = profile.temp_profile_picture
+                profile.save()
+                # Limpar a imagem temporária após salvar
+                profile.temp_profile_picture.delete()
+
+            return JsonResponse({'new_image_url': profile.profile_picture.url})
+
+    else:
+        form = ProfileEditForm(instance=profile)
+
+    return render(request, 'edit_profile.html', {'form': form, 'profile': profile})

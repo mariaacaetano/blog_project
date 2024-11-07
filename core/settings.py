@@ -20,25 +20,13 @@ STATIC_DIR=os.path.join('/static/')
 STATICFILES_DIRS = os.path.join(BASE_DIR,'static'),
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 
-# AUTH_USER_MODEL = 'accounts.BlogUser'  # Ajuste 'accounts' para o nome do seu aplicativo
-
-# config/settings.py
 LOGIN_REDIRECT_URL = 'post_list'
 LOGOUT_REDIRECT_URL = 'post_list'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-kfhbi%yf2#*3mbm+m&(a+bmu&fiac978g_pjdc+vywbva-3c+5'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -84,9 +72,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -94,9 +79,6 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -114,9 +96,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
@@ -124,18 +103,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
 STATIC_ROOT = os.path.join(BASE_DIR,'/static')
 STATIC_URL = '/static/' 
 
 MEDIA_URL = '/media/'  # Adicione esta linha se ainda não estiver presente
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Certifique-se de que isso está definido
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
  
 from django.contrib.messages import constants as messages
@@ -147,7 +119,6 @@ MESSAGE_TAGS = {
         messages.WARNING: 'alert-warning',
         messages.ERROR: 'alert-danger',
 }
-
 
 CKEDITOR_CONFIGS = {
     'default': {
@@ -178,3 +149,4 @@ CKEDITOR_CONFIGS = {
         ]
     }
 }
+

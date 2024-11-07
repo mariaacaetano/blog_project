@@ -1,56 +1,216 @@
 {% extends 'base.html' %}
 
-{% block title %}Detalhes Postagem{% endblock %}
+{% block title %}Detalhes da Postagem{% endblock %}
 
 {% block content %}
-	<div class="text-center">
-		<h1>{{post.title}}</h1>
-		<p>{{post.create_at}}</p> 
+<div class="blog-container">
+    <div class="content-wrapper">
+        <!-- Coluna da Postagem -->
+        <div class="post-column">
+            <div class="post-header">
+                <h1 class="post-title">{{ post.title }}</h1>
+                <p class="post-date">{{ post.create_at|date:"d M, Y" }}</p>
+                <div class="image-container">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                </div>
+                <p class="post-author">Escrito por <strong>@{{ post.author }}</strong></p>
+            </div>
 
-		<div class="image-container" style="border-bottom: 30px; padding-bottom: 20px">
-			<img src="{{post.image.url}}" width="400" alt="{{post.title}}">
-		</div>
-		
-		{{post.description | safe}}
-		<p><strong>Author:</strong> @{{post.author}}</p>
-		{% if post.author == request.user or post.author.is_staff %}
-			<a class="btn btn-info" href="{% url 'post_update' post.id %}">Atualizar</a>
-			<a class="btn btn-danger" href="{% url 'post_delete' post.id %}">Deletar</a>
-		{%endif%}
-	</div>
-	<h2>Comentários</h2>
-<div>
-    {% for comment in comments %}
-        <div>
-            <strong>@{{ comment.author.username }}</strong>
-            <p style="font-size: 10px">{{ comment.create_at }}</p>
-            <div style="background-color: #d1d1d1; width: 600px; border-radius: 7px;">
-                <p style="padding: 5px">{{ comment.body|safe }}</p>
+            <div class="post-content">
+                {{ post.description | safe }}
+            </div>
 
-                {% if request.user == comment.author or request.user.is_staff %}
-                    <form method="POST" action="{% url 'comment_delete' comment.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                    </form>
-                {% endif %}
+            {% if request.user == post.author or request.user.is_staff %}
+                <div class="post-actions text-center">
+                    <a class="btn btn-info" href="{% url 'post_update' post.id %}">Atualizar</a>
+                    <a class="btn btn-danger" href="{% url 'post_delete' post.id %}">Deletar</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Coluna de Comentários -->
+        <div class="comments-column">
+            <h2 class="section-title">Comentários</h2>
+            <div class="comments-section">
+                {% for comment in comments %}
+                    <div class="comment-container">
+                        <div class="comment-header">
+                            <strong>@{{ comment.author.username }}</strong>
+                            <p class="comment-date">{{ comment.create_at|date:"d M, Y H:i" }}</p>
+                        </div>
+                        <div class="comment-body">
+                            <p>{{ comment.body|safe }}</p>
+                            {% if request.user == comment.author or request.user.is_staff %}
+                                <div class="comment-actions">
+                                    <a href="{% url 'editar_comentario' comment.id %}" class="btn btn-warning btn-sm">Editar</a>
+                                    <form method="POST" action="{% url 'comment_delete' comment.id %}" class="delete-form" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>Não há comentários ainda.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Botão para mostrar o formulário de comentário -->
+            {% if user.is_authenticated %}
+                <button id="show-comment-form-btn" class="btn btn-primary">Escrever um comentário</button>
+            {% endif %}
+
+            <!-- Formulário de Comentário oculto inicialmente -->
+            <div id="comment-form-container" style="display: none; margin-top: 15px;">
+                <h3 class="section-title">Adicionar um Comentário</h3>
+                <form method="post" class="comment-form">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit" class="btn btn-success">Enviar Comentário</button>
+                </form>
             </div>
         </div>
-    {% empty %}
-        <p>Não há comentários ainda.</p>
-    {% endfor %}
+    </div>
 </div>
 
-<h3>Adicionar um Comentário</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ comment_form.as_p }}
-    <button type="submit" class="btn btn-primary">Enviar Comentário</button>
-</form>
+<!-- Estilos -->
+<style>
+    .blog-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+    .content-wrapper {
+        display: flex;
+        gap: 20px;
+    }
 
+    /* Coluna da Postagem */
+    .post-column {
+        flex: 2;
+        border-right: 1px solid #ddd;
+        padding-right: 20px;
+    }
+    .post-header {
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+    .post-title {
+        font-size: 2rem;
+        color: #333;
+        margin: 0;
+    }
+    .post-date, .post-author {
+        color: #888;
+        font-size: 0.9rem;
+        margin: 5px 0;
+    }
+    .image-container img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin-top: 15px;
+    }
+    .post-content {
+        line-height: 1.6;
+        font-size: 1.1rem;
+        color: #444;
+        margin: 20px 0;
+    }
+
+    /* Coluna de Comentários */
+    .comments-column {
+        flex: 1;
+        padding-left: 20px;
+    }
+    .comments-section {
+        margin-top: 10px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 10px;
+    }
+    .section-title {
+        font-size: 1.5rem;
+        color: #555;
+        margin: 15px 0;
+    }
+    .comment-container {
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .comment-date {
+        font-size: 0.8rem;
+        color: #888;
+    }
+    .comment-body {
+        padding-top: 10px;
+        color: #333;
+    }
+    .comment-actions {
+        margin-top: 5px;
+    }
+    .comment-actions .btn {
+        margin-right: 5px;
+    }
+    .delete-form {
+        display: inline;
+    }
+
+    /* Formulário de comentário */
+    .comment-form button {
+        background-color: #28a745;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+    .comment-form button:hover {
+        background-color: #218838;
+    }
+
+    /* Responsividade */
+    @media (max-width: 992px) {
+        .content-wrapper {
+            flex-direction: column;
+        }
+        .post-column {
+            border-right: none;
+            padding-right: 0;
+        }
+        .comments-column {
+            padding-left: 0;
+        }
+    }
+</style>
+
+<!-- Scripts adicionais -->
 {% block extra_js %}
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
     <script>
-        CKEDITOR.replace('id_body'); // Altere 'id_body' pelo ID do campo de corpo do comentário
+        // Ativar CKEditor para o campo de comentário
+        CKEDITOR.replace('id_body'); 
+        
+        // Alternar visibilidade do formulário de comentário
+        document.getElementById('show-comment-form-btn').addEventListener('click', function() {
+            var formContainer = document.getElementById('comment-form-container');
+            if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                formContainer.style.display = 'block';
+            } else {
+                formContainer.style.display = 'none';
+            }
+        });
     </script>
 {% endblock extra_js %}
 

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Comentário{% endblock %}
+
+{% block content %}
+<div class="edit-comment-container">
+    <h2>Editar Comentário</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+        <a href="{% url 'post_detail' comentario.post.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<!-- Incluir o CKEditor -->
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+<script>
+    CKEDITOR.replace('id_body');
+</script>
+
+<style>
+    .edit-comment-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+    }
+</style>
+{% endblock content %}
