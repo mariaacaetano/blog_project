@@ -50,23 +50,22 @@ class ProfileForm(forms.ModelForm):
             'date_of_birth': forms.DateInput(attrs={'type': 'date'})  # Isso faz com que o campo se torne um seletor de data
         }
 
-
 class ProfileEditForm(forms.ModelForm):
-    # Adicionando campos para editar informações do usuário
-    username = forms.CharField(max_length=150, disabled=True)  # Tornando o campo 'username' somente leitura
-    first_name = forms.CharField(max_length=30, required=False)
+    # Campos de edição do perfil
+    username = forms.CharField(max_length=150, disabled=True)  # 'username' somente leitura
+    first_name = forms.CharField(max_length=30, required=False)  # Campos editáveis
     last_name = forms.CharField(max_length=30, required=False)
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=True)  # 'email' editável
 
     class Meta:
-        model = Profile
-        fields = ['bio', 'date_of_birth', 'favorite_song']
+        model = Profile  # Modelo relacionado ao perfil
+        fields = ['bio', 'date_of_birth', 'favorite_song']  # Campos do perfil
 
     def __init__(self, *args, **kwargs):
         # Passando o usuário atual para o formulário para garantir que o campo 'username' esteja bloqueado
         self.user = kwargs.pop('user')
         super(ProfileEditForm, self).__init__(*args, **kwargs)
-        
+
         # Preenchendo os campos com os dados do usuário
         self.fields['username'].initial = self.user.username
         self.fields['first_name'].initial = self.user.first_name
@@ -79,18 +78,19 @@ class ProfileEditForm(forms.ModelForm):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.email = self.cleaned_data['email']
-        
-        # Salva as mudanças no modelo User
+
+        # Salvar as mudanças no modelo User
         if commit:
             user.save()
 
-        # Agora salvamos as alterações no Profile
+        # Agora salvar as alterações no Profile
         profile = super().save(commit=False)
-        profile.user = self.user  # Garantir que o perfil está vinculado ao usuário
+        profile.user = self.user  # Garantir que o perfil esteja vinculado ao usuário
         if commit:
             profile.save()
-        
-        return profile  
+
+        return profile
+
 
 class ProfilePictureForm(forms.ModelForm):
     # Campo de imagem temporário, apenas para upload

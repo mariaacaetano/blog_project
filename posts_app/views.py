@@ -207,17 +207,16 @@ def edit_profile_picture(request):
 
 @login_required
 def edit_profile_info(request):
-    profile = get_object_or_404(Profile, user=request.user)  # Obtém o perfil existente do usuário
+    # Verificando se o método é POST (quando o formulário foi enviado)
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)  # Passa a instância do perfil
+        form = ProfileEditForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()  # Atualiza o perfil existente
-            return redirect('profile')  # Redireciona após a atualização
+            form.save()  # Salvando as alterações no formulário
+            return redirect('profile')  # Redireciona para o perfil após salvar
     else:
-        form = ProfileForm(instance=profile)  # Carrega o formulário com os dados atuais do perfil
-    
-    return render(request, 'edit_profile_info.html', {'form': form})
+        form = ProfileEditForm(user=request.user)  # Criando o formulário e passando o usuário logado
 
+    return render(request, 'edit_profile_info.html', {'form': form})  # Renderizando a página com o formulário
 @login_required
 def like_post(request, post_id):
     post = get_object_or_404(Posts, id=post_id)
