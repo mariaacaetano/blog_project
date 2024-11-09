@@ -1,8 +1,14 @@
 from django import forms
 from .models import Posts, Comments, Profile
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm
 
 User = get_user_model()
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ('username', 'password1', 'password2')  # Campos que você quer exibir
 
 class PostsForm(forms.ModelForm):
     class Meta:
@@ -39,7 +45,7 @@ class CommentsForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['profile_picture', 'bio', 'date_of_birth', 'favorite_song']
+        fields = ['bio', 'date_of_birth', 'favorite_song']
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'})  # Isso faz com que o campo se torne um seletor de data
         }

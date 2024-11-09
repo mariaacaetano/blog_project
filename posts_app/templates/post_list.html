@@ -17,7 +17,7 @@
 			<div class="container-fluid" style="padding: 20px; margin: 40">
 				<div class="jumbotron custom-jumbotron text-black rounded bg-white text-center" id="navbarSupportedContent">
 					{% if user.is_authenticated %}
-						<span class="navbar-text nav-item username-text">Olá, {{ user.first_name }}!</span>    
+						<span class="navbar-text nav-item username-text" style="font-size:18px">Olá, {{ user.first_name }}!</span>    
 					{% else %}
 						<span class="navbar-text nav-item username-text">Você não está logado ainda. É novo por aqui? <a href="{% url 'signup' %}">Clique aqui.</a></span>
 					{% endif %}
@@ -40,7 +40,7 @@
 							{% endif %}
 							<h3 class="card-text"><strong>{{ post.title }}</strong></h3>
 							<p class="card-text" style="font-size:13px">{{ post.create_at }}</p>
-							<p class="card-text" style="font-size: 15px">{{ post.description|slice:":100"|safe }}...</p>
+							<p class="card-text card-text-default" style="font-size: 15px;">{{ post.description|slice:":100"|safe }}...</p>
 							<a class="btn btn-secondary" href="{% url 'post_detail' post.id %}" style="font-size: 15px;">Leia Mais</a>
 						</div>
 					</div> 
@@ -48,4 +48,13 @@
 				{% endfor %} 
 			</div>	 
 	</div>
+
+	<style>
+		.card-text-default {
+			font-size: 15px;
+			font-family: Arial, sans-serif; /* Defina a fonte que preferir */
+			font-weight: normal; /* Altere o peso, se necessário */
+			line-height: 1.5; /* Para dar um bom espaçamento entre as linhas */
+		}
+	</style>
 {% endblock content %}

@@ -9,11 +9,25 @@
         <div class="post-column">
             <div class="post-header">
                 <h1 class="post-title">{{ post.title }}</h1>
+                        <!-- Botão de Curtir -->
+                        <div class="like-button">
+                            {% if user.is_authenticated %}
+                                {% if is_liked %}
+                                    <a href="{% url 'like_post' post.id %}" class="liked-button">❤️ Curtido</a>
+                                {% else %}
+                                    <a href="{% url 'like_post' post.id %}" class="not-liked-button">🤍 Curtir</a>
+                                {% endif %}
+                            {% else %}
+                                <p><a href="{% url 'login' %}">Faça login para curtir</a></p>
+                            {% endif %}
+                        </div>
                 <p class="post-date">{{ post.create_at|date:"d M, Y" }}</p>
                 <div class="image-container">
                     <img src="{{ post.image.url }}" alt="{{ post.title }}">
                 </div>
-                <p class="post-author">Escrito por <strong>@{{ post.author }}</strong></p>
+                <p class="post-author">Escrito por <strong><p class="post-author">Escrito por <strong><a href="{% url 'author-profile' post.author.username %}">@{{ post.author.username }}</a></strong></p>
+            </p>
+                
             </div>
 
             <div class="post-content">
@@ -76,6 +90,23 @@
 
 <!-- Estilos -->
 <style>
+    .liked-button {
+        color: red;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    
+    .not-liked-button {
+        color: gray;
+        font-weight: bold;
+        text-decoration: none;
+    }
+    
+    .like-button {
+        margin-top: 10px;
+    }
+
+    
     .blog-container {
         max-width: 1200px;
         margin: 0 auto;

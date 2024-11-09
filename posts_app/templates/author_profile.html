@@ -1,79 +1,47 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html'%}
+{% load static%}
 
-{% block title %}Meu Perfil{% endblock %}
+{% block title %}Perfil do Autor{% endblock %}
 
 {% block content %}
 <div class="profile-container">
     <div class="profile-header">
         <div class="profile-image-container">
-            {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image">
+            {% if author_profile.profile_picture %}
+                <img src="{{ author_profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image">
             {% else %}
                 <img src="{% static 'images/default_profile_picture.png' %}" alt="Foto de perfil padrão" class="profile-image">
             {% endif %}
-            <a href="{% url 'edit_profile_picture' %}" class="edit-profile-image">
-                <img src="{% static 'images/camera_icon.png' %}" alt="Ícone de câmera" class="camera-icon">
-            </a>
         </div>
-        
+
         <div class="profile-info">
-            <h2>@{{ user.username }}</h2>
+            <h2>@{{ author_profile.user.username }}</h2>
             <div class="profile-actions" style="display: flex">
-                <a href="{% url 'edit_profile_info' %}" class="btn">Editar info</a>
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn">Logout</button>
-                </form>
-            </div>
-            <div class="profile-stats" style="padding-top:10px">
-                <span>3 publicações</span>
-                <span>440 seguidores</span>
-                <span>352 seguindo</span>
+                {% if author_profile.user != user %}
+                    <form action="{% url 'follow' username=author_profile.user.username %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">
+                            {% if is_following %}
+                                Deixar de Seguir
+                            {% else %}
+                                Seguir
+                            {% endif %}
+                        </button>
+                    </form>
+                {% endif %}
             </div>
             <div style="padding-top:10px">
-                <strong>{{ user.first_name }} {{ user.last_name }}</strong>
-                <div style='padding-top: 10px'>
-                    {{profile.bio}}
-                    {{profile.favorite_song}}
-                </div>
+                <strong>{{ author_profile.user.first_name }} {{ author_profile.user.last_name }}</strong>
+                <p>{{ author_profile.bio }}</p>
+                <p>{{ author_profile.favorite_song }}</p>
             </div>
         </div>
     </div>
-
- <!-- Navegação do Perfil -->
- <div class="profile-navigation">
-    <a href="javascript:void(0);" class="nav-item" onclick="showSection('publications')">Publicações</a>
-    <a href="javascript:void(0);" class="nav-item" onclick="showSection('comments')">Comentários</a>
-    <a href="#" class="nav-item">Curtidas</a>
-    <a href="#" class="nav-item">Seguidores</a>
 </div>
 
-<!-- Seções dinâmicas -->
-<!-- Publicações - visível por padrão -->
-<div id="publications" class="profile-section" style="display: block;">
-    <h3>Publicações</h3>
-    {% for post in posts %}
-        <div class="post-item">
-            <h4>{{ post.title }}</h4>
-            <p>{{ post.description|slice:":50"|safe }}...</p>
-            <a href="{% url 'post_detail' id=post.id %}" class="btn">Ver Publicação</a>
-        </div>
-    {% endfor %}
-</div>
 
-<!-- Comentários - oculto por padrão -->
-<div id="comments" class="profile-section" style="display: none;">
-    <h3>Comentários</h3>
-    {% for comment in comments %}
-        <div class="post-item">
-            <h4>{{ comment.post.title }}</h4>
-            <p>{{ comment.body|safe }}...</p>
-            <a href="{% url 'post_detail' id=comment.post.id %}" class="btn">Ver Publicação</a>
-        </div>
-    {% endfor %}
-</div>
-</div>
+
+
 
 <!-- Scripts para alternar entre Publicações e Comentários -->
 <script>

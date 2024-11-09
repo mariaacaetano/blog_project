@@ -11,6 +11,7 @@ class Posts(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     tag = models.ForeignKey("PostTag", on_delete=models.SET_NULL, null=True, blank=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Like', related_name='liked_posts', blank=True)
 
     def __str__(self):
         return self.title
@@ -20,10 +21,18 @@ class Posts(models.Model):
         verbose_name_plural = 'Posts'
         ordering = ['id']
 
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    post = models.ForeignKey(Posts, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('user', 'post')
+        
 class PostTag(models.Model):
     tag_name = models.CharField(max_length=50)
     tag_description = models.CharField(max_length=255)
+    tag_icon = models.ImageField(null=True)
     
     def __str__(self):
         return self.tag_name
@@ -47,6 +56,7 @@ class Profile(models.Model):
     favorite_song = models.CharField(max_length=255, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     temp_profile_picture = models.ImageField(upload_to='temp_profile_pics/', null=True, blank=True)  # Campo temporário
+    following = models.ManyToManyField(User, related_name='followers', blank=True)
 
     def __str__(self):
         return self.user.username

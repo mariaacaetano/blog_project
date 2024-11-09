@@ -1,0 +1,101 @@
+<!-- sidebar.html -->
+{% load static %}
+
+<!-- Ícone para abrir/fechar o menu -->
+<div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+
+<!-- Menu lateral -->
+<div class="sidebar" id="sidebar">
+    <ul class="menu-list">
+        <!-- Iterar sobre as tags e exibir ícones e nomes -->
+        {% for tag in tags %}
+            <li class="tag-item">
+                <a href="#{{ tag.tag_name|lower }}">{{ tag.tag_name }}</a>
+                {% if tag.tag_icon %}
+                    <img src="{{ tag.tag_icon.url }}" alt="{{ tag.tag_name }} Icon" class="tag-icon">
+                {% endif %}
+            </li>
+        {% endfor %}
+        
+        <li><a href="#sobre-nos">Sobre Nós</a></li>
+        <li><a href="#contato">Contato</a></li>
+        
+        <!-- Item para is_staff -->
+        {% if user.is_staff %}
+            <li class="configurations"><a href="#configuracoes">Configurações</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+
+
+<style>
+    /* Estilos para o ícone do menu */
+    .menu-icon {
+        font-size: 24px;
+        cursor: pointer;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1010; /* Z-index mais alto que o menu */
+    }
+
+    /* Estilos do menu lateral */
+    .sidebar {
+        height: 100%;
+        width: 0; /* Começa fechado */
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #333;
+        overflow-x: hidden;
+        transition: width 0.3s; /* Suaviza a abertura e fechamento */
+        padding-top: 60px;
+        z-index: 1000; /* Z-index alto para sobrepor outros elementos */
+    }
+
+    /* Estilos para os itens do menu */
+    .sidebar .menu-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar .menu-list li {
+        padding: 10px 20px;
+        text-align: left;
+    }
+
+    .sidebar .menu-list li a {
+        color: #fff;
+        text-decoration: none;
+        display: block;
+    }
+
+    .sidebar .menu-list li a:hover {
+        background-color: #575757;
+    }
+
+    /* Estilos para o item Configurações fixo no canto inferior */
+    .configurations {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .configurations a {
+        color: #fff;
+    }
+</style>
+
+<script>
+    function toggleMenu() {
+        var sidebar = document.getElementById("sidebar");
+        if (sidebar.style.width === "250px") {
+            sidebar.style.width = "0";
+        } else {
+            sidebar.style.width = "250px";
+        }
+    }
+</script>

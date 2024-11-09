@@ -1,8 +1,8 @@
 {% load static %}
 
-<body style="font-size: 18px"> 
-    <div class="container">
-        <header class="blog-header py-3">
+
+    <div class="container" style="padding-top:20px">
+        <header class="blog-header">
             <div class="row flex-nowrap justify-content-between align-items-center">
                 <div class="col-4 pt-1">
                     <a href="{% url 'post_list' %}">
@@ -10,7 +10,7 @@
                     </a>
                 </div>
                 <div class="col-4 text-center">
-                    <span class="text-muted" style="font-size: 30px;">Django Blog Project</span>
+                    <span class="text-muted" style="font-size: 40px">Django Blog Project</span>
                 </div>
                 <div class="col-4 d-flex justify-content-end align-items-center">
                     {% if not user.is_authenticated %}
@@ -26,24 +26,8 @@
                     {% endif %}
                 </div>
             </div>
-
-            <!-- Nav Bar -->
-            <div class="nav-scroller py-1 mb-2" style="overflow-x: auto;">
-                <nav class="nav d-flex justify-content-between">
-                    <a class="p-3 text-muted" href="#">Educação</a>
-                    <a class="p-3 text-muted" href="#">Tecnologia</a>
-                    <a class="p-3 text-muted" href="#">Design</a>
-                    <a class="p-3 text-muted" href="#">Cultura</a>
-                    <a class="p-3 text-muted" href="#">Negócios</a>
-                    <a class="p-3 text-muted" href="#">Política</a>
-                    <a class="p-3 text-muted" href="#">Entretenimento</a>
-                    <a class="p-3 text-muted" href="#">Ciência</a>
-                    <a class="p-3 text-muted" href="#">Saúde</a>
-                    <a class="p-3 text-muted" href="#">Sobre nós</a>
-                    <a class="p-3 text-muted" href="#">Contato</a>
-                </nav>
-            </div>
         </header>
+        <hr style="border: 1px solid #000000; margin-top: 20px; margin-bottom: 20px;">
     </div>
 
     <!-- JavaScript para tocar o som ao clicar na imagem -->
@@ -66,6 +50,10 @@
 
         /* Para telas pequenas, exibe o logo e o título em uma linha única */
         @media (max-width: 768px) {
+            .blog-header {
+                border-bottom: 1px solid #ddd; /* Ajuste a cor e a espessura conforme necessário */
+                padding-bottom: 1px; /* Espaçamento para afastar a borda do conteúdo */
+            }
             .blog-header .row {
                 flex-direction: column;
                 align-items: center;
@@ -89,5 +77,11 @@
         .nav a {
             white-space: nowrap;
         }
+        hr {
+            border: 0;
+            border-top: 4px solid #ddd; 
+            margin-top: 0;
+            margin-bottom: 50px;
+        }
+        
     </style>
-</body>
