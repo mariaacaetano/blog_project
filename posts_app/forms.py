@@ -104,9 +104,12 @@ class ProfileEditForm(forms.ModelForm):
 
 
 class ProfilePictureForm(forms.ModelForm):
-    # Campo de imagem temporário, apenas para upload
     cropped_image = forms.ImageField(required=True, label="Escolha a imagem cortada")
 
     class Meta:
         model = Profile
         fields = ['profile_picture']  
+        
+
+class SearchForm(forms.Form):
+    query = forms.CharField(max_length=255, required=False, label="Pesquisar")

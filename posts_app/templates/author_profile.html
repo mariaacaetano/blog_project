@@ -10,56 +10,58 @@
             {% if author_profile.profile_picture %}
                 <img src="{{ author_profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image">
             {% else %}
-                <img src="{% static 'images/otter_icon.png' %}" alt="Foto de perfil padrão" class="profile-image">
+                <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="profile-image">
             {% endif %}
         </div>
 
         <div class="profile-info">
             <h2>@{{ author_profile.user.username }}</h2>
-            <p>{{ author_profile.user.profile.followers.count }} followers | {{ author_profile.user.profile.following.count }} following
+            <p>{{ followers.count }} followers | {{ following.count }} following
                 <br>
             <br><strong>{{ author_profile.user.first_name }} {{ author_profile.user.last_name }}</strong>
             <br>{{ author_profile.bio }}
             <br><strong>Favorite Song:</strong> {{ author_profile.favorite_song }}</p>
             
          
-           <!-- Botão de Follow/Unfollow -->
-           {% if author != request.author %}
-                <form method="POST" action="{% url 'follow_user' author_profile.user.username %}">
-                    {% csrf_token %}
-                    <button type="submit" class='btn btn-secondary'>
-                        {% if is_following %}
-                            Deixar de seguir
-                        {% else %}
-                            Seguir
-                        {% endif %}
-                    </button>
-                </form>
+            <!-- Botão de Follow/Unfollow -->
+            {% if author != request.author %}
+            <form method="POST" action="{% url 'follow_user' author_profile.user.username %}">
+                {% csrf_token %}
+                <button type="submit" class='button'>
+                    {% if is_following %}
+                        Unfollow
+                    {% else %}
+                        Follow
+                    {% endif %}
+                </button>
+            </form>
             {% endif %}
         </div>
-</div>
+    </div>
 
 
-  <!-- Navegação do Perfil -->
-  <div class="profile-navigation">
-    <a href="javascript:void(0);" class="nav-item" onclick="showSection('publications')">Publicações</a>
-    <a href="javascript:void(0);" class="nav-item" onclick="showSection('comments')">Comentários</a>
-</div>
+    <!-- Navegação do Perfil -->
+    <div class="profile-navigation">
+        <a href="javascript:void(0);" class="nav-item" onclick="showSection('publications')">Publicações</a>
+        <a href="javascript:void(0);" class="nav-item" onclick="showSection('comments')">Comentários</a>
+        <a href="javascript:void(0);" class="nav-item" onclick="showSection('followers')">Followers</a>
+        <a href="javascript:void(0);" class="nav-item" onclick="showSection('following')">Following</a>
+    </div>
 
-<!-- Seções dinâmicas -->
-<!-- Publicações - visível por padrão -->
-<div id="publications" class="profile-section" style="display: block;">
-    {% for post in posts %}
-        <div class="post-item">
-            <h4>{{ post.title }}</h4>
-            <p>{{ post.description|slice:":50"|safe }}...</p>
-            <a href="{% url 'post_detail' id=post.id %}" class="btn">Ver Publicação</a>
-        </div>
-    {% endfor %}
-</div>
+    <!-- Seções dinâmicas -->
+    <!-- Publicações - visível por padrão -->
+    <div id="publications" class="profile-section" style="display: block;">
+        {% for post in posts %}
+            <div class="post-item">
+                <h4>{{ post.title }}</h4>
+                <p>{{ post.description|slice:":50"|safe }}...</p>
+                <a href="{% url 'post_detail' id=post.id %}" class="btn">Ver Publicação</a>
+            </div>
+        {% endfor %}
+    </div>
 
-<!-- Comentários - oculto por padrão -->
     <!-- Comentários - oculto por padrão -->
+        <!-- Comentários - oculto por padrão -->
     <div id="comments" class="profile-section" style="display: none;">
         {% for comment in comments %}
             <div class="post-item">
@@ -69,9 +71,51 @@
             </div>
         {% endfor %}
     </div>
-</div>
 
+    <!-- Seguidores -->
+    <div id="followers" class="profile-section" style="display: none;">
+        {% for follower in followers %}
+            <div class="following-item" style="display: flex; align-items: center; margin-bottom: 15px;">
+                <div class="follow-image-container">
+                    {% if follower.profile.profile_picture %}
+                        <img src="{{ follower.profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image" style="width: 50px; height: 50px; border-radius: 50%;">
+                    {% else %}
+                        <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="profile-image" style="width: 50px; height: 50px; border-radius: 50%;">
+                    {% endif %}
+                </div>
+                <div style="margin-left: 15px;">
+                    <p style="margin: 0;">
+                    {% if follower.username == request.user.username%}
+                        <a href="{% url 'profile' username=follower.username %}" style="font-weight: bold; color: #333;">@ {{follower.username}}</a></p>
+                    {%else%}
+                        <a href="{% url 'author_profile' username=follower.username %}" style="font-weight: bold; color: #333;">@ {{follower.username}}</a></p>
+                    {% endif %}
+                    <p>{{follower.profile.bio}}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
 
+    <div id="following" class="profile-section" style="display: none;">
+        {% for follow in following %}
+            <div class="following-item" style="display: flex; align-items: center; margin-bottom: 15px;">
+                <div class="follow-image-container">
+                    {% if follow.profile.profile_picture %}
+                        <img src="{{ follow.profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image" style="width: 50px; height: 50px; border-radius: 50%;">
+                    {% else %}
+                        <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="profile-image" style="width: 50px; height: 50px; border-radius: 50%;">
+                    {% endif %}
+                </div>
+                <div style="margin-left: 15px;">
+                    <p style="margin: 0;">
+                    <a href="{% url 'author_profile' username=follow.username %}" style="font-weight: bold; color: #333;">@ {{follow.username}}</a></p>
+                    <p>{{follow.user.profile.bio}}
+                </div>
+        {% endfor %}
+    </div>
+
+    
 <!-- Scripts para alternar entre Publicações e Comentários -->
 <script>
     // Função para mostrar a seção selecionada
@@ -88,29 +132,7 @@
             sectionToShow.style.display = 'block';
         }
     }
-        document.getElementById("follow-button").addEventListener("click", function() {
-            let following = this.dataset.following === 'True';  // Verifica o estado atual
-    
-            // Faz a requisição para seguir/desseguir o usuário
-            fetch("{% url 'follow_user' username=user.username %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ following: following })
-            }).then(response => response.json())
-              .then(data => {
-                  if (data.status === 'success') {
-                      // Altera o texto do botão com base no estado
-                      let text = data.follow_status === 'unfollow' ? 'Unfollow' : 'Follow';
-                      let buttonText = this.querySelector('.text');
-                      buttonText.innerHTML = text;
-                      this.dataset.following = (data.follow_status === 'unfollow');
-                  }
-              })
-              .catch(err => console.error('Erro ao seguir/desseguir:', err));
-        });
+
     
 </script>
 
@@ -118,7 +140,14 @@
 
 
 <style>
-    
+    .following-item {
+        background-color: #f0f0f0;
+        margin: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 20px; /* Adicionando a unidade px */
+    }
+
     .post-item {
         background-color: #f0f0f0;
         margin: 10px;
@@ -267,5 +296,99 @@
     padding: 0;
 }
 
+/* From Uiverse.io by zjssun */ 
+    .button {
+      position: relative;
+      padding: 10px 100px;
+      border-radius: 6px;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      background-color: #ee7abe;
+      transition: all 0.2s ease;
+    }
+    
+    .button:active {
+      transform: scale(0.96);
+    }
+    
+    .button:before,
+    .button:after {
+      position: absolute;
+      content: "";
+      width: 150%;
+      left: 50%;
+      height: 100%;
+      transform: translateX(-50%);
+      z-index: -1000;
+      background-repeat: no-repeat;
+    }
+    
+    .button:hover:before {
+      top: -70%;
+      background-image: radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, transparent 20%, #ee7abe 20%, transparent 30%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, #ee7abe 15%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%);
+      background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%,
+        10% 10%, 18% 18%;
+      background-position: 50% 120%;
+      animation: greentopBubbles 0.6s ease;
+    }
+    
+    @keyframes greentopBubbles {
+      0% {
+        background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%,
+          40% 90%, 55% 90%, 70% 90%;
+      }
+    
+      50% {
+        background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%,
+          50% 50%, 65% 20%, 90% 30%;
+      }
+    
+      100% {
+        background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%,
+          50% 40%, 65% 10%, 90% 20%;
+        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+      }
+    }
+    
+    .button:hover::after {
+      bottom: -70%;
+      background-image: radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, transparent 10%, #ee7abe 15%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+        radial-gradient(circle, #ee7abe 20%, transparent 20%);
+      background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 20% 20%, 18% 18%;
+      background-position: 50% 0%;
+      animation: greenbottomBubbles 0.6s ease;
+    }
+    
+    @keyframes greenbottomBubbles {
+      0% {
+        background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%,
+          70% -10%, 70% 0%;
+      }
+    
+      50% {
+        background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%,
+          105% 0%;
+      }
+    
+      100% {
+        background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%,
+          110% 10%;
+        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+      }
+    }
 </style>
 {% endblock %}

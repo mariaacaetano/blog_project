@@ -1,96 +1,128 @@
-{% extends 'base.html' %}
-{% load static %}
+    {% extends 'base.html' %}
+    {% load static %}
 
-{% block title %}Meu Perfil{% endblock %}
+    {% block title %}Meu Perfil{% endblock %}
 
-{% block content %}
-<div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-image-container">
-            {% if profile.profile_picture %}
-                <img src="{{ profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image">
-            {% else %}
-                <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="profile-image">
-            {% endif %}
-            <a href="{% url 'edit_profile_picture' %}" class="edit-profile-image">
-                <img src="{% static 'images/camera_icon.png' %}" alt="Ícone de câmera" class="camera-icon">
-            </a>
+    {% block content %}
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-image-container">
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image">
+                {% else %}
+                    <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="profile-image">
+                {% endif %}
+                <a href="{% url 'edit_profile_picture' %}" class="edit-profile-image">
+                    <img src="{% static 'images/camera_icon.png' %}" alt="Ícone de câmera" class="camera-icon">
+                </a>
+            </div>
+            
+            <div class="profile-info">
+                <h2>@{{ user.username }}</h2>
+                <div class="profile-actions" style="display: flex">
+                    <a href="{% url 'edit_profile_info' %}" class="btn">Editar info</a>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn">Logout</button>
+                    </form>
+                </div>
+                <div class="profile-stats" style="padding-top:10px">
+                    <span>{{ followers_count }} followers</span>
+                    <span>{{ following_count }} following</span>
+
+                </div>
+                <div style="padding-top:10px">
+                    <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+                        <br>{{profile.bio}}
+                        <br><strong>Favorite Song:</strong>{{profile.favorite_song}}
+                </div>
+            </div>
         </div>
-        
-        <div class="profile-info">
-            <h2>@{{ user.username }}</h2>
-            <div class="profile-actions" style="display: flex">
-                <a href="{% url 'edit_profile_info' %}" class="btn">Editar info</a>
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn">Logout</button>
-                </form>
-            </div>
-            <div class="profile-stats" style="padding-top:10px">
-                <span>{{ followers_count }} followers</span>
-                <span>{{ following_count }} following</span>
 
-            </div>
-            <div style="padding-top:10px">
-                <strong>{{ user.first_name }} {{ user.last_name }}</strong>
-                    <br>{{profile.bio}}
-                    <br><strong>Favorite Song:</strong>{{profile.favorite_song}}
-            </div>
+        <!-- Navegação do Perfil -->
+        <!-- Navegação do Perfil -->
+        <div class="profile-navigation">
+            <a href="javascript:void(0);" class="nav-item" onclick="showSection('publications')">Publicações</a>
+            <a href="javascript:void(0);" class="nav-item" onclick="showSection('comments')">Comentários</a>
+            <a href="javascript:void(0);" class="nav-item" onclick="showSection('followers')">Seguidores</a>
+            <a href="javascript:void(0);" class="nav-item" onclick="showSection('following')">Seguindo</a>
         </div>
-    </div>
-
-  <!-- Navegação do Perfil -->
-  <!-- Navegação do Perfil -->
-<div class="profile-navigation">
-    <a href="javascript:void(0);" class="nav-item" onclick="showSection('publications')">Publicações</a>
-    <a href="javascript:void(0);" class="nav-item" onclick="showSection('comments')">Comentários</a>
-</div>
 
 
-<!-- Seções dinâmicas -->
-<!-- Publicações - visível por padrão -->
-<div id="publications" class="profile-section" style="display: block;">
-    {% for post in posts %}
-        <div class="post-item">
-            <h4>{{ post.title }}</h4>
-            <p>{{ post.description|slice:":50"|safe }}...</p>
-            <a href="{% url 'post_detail' id=post.id %}" class="btn">Ver Publicação</a>
+        <!-- Seções dinâmicas -->
+        <!-- Publicações - visível por padrão -->
+        <div id="publications" class="profile-section" style="display: block;">
+            {% for post in posts %}
+                <div class="post-item">
+                    <h4>{{ post.title }}</h4>
+                    <p>{{ post.description|slice:":50"|safe }}...</p>
+                    <a href="{% url 'post_detail' id=post.id %}" class="btn">Ver Publicação</a>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
 
+        <!-- Comentários - oculto por padrão -->
+            <!-- Comentários - oculto por padrão -->
+        <div id="comments" class="profile-section" style="display: none;">
+            {% for comment in comments %}
+                <div class="post-item">
+                    <h4>{{ comment.post.title }}</h4>
+                    <p>{{ comment.body|safe }}...</p>
+                    <a href="{% url 'post_detail' id=comment.post.id %}" class="btn">Ver Publicação</a>
+                </div>
+            {% endfor %}
+        </div>
 
+                
+        <div id="followers-section" class="profile-section" style="display: none;">
+            <!-- Conteúdo dos seguidores -->
+            {% for follower in followers %}
+                <div class="follower">
+                    <div class="follower-image">
+                        {% if follower.profile.profile_picture %}
+                            <img src="{{ follower.profile.profile_picture.url }}" alt="Foto de perfil" class="follower-img">
+                        {% else %}
+                            <img src="{% static 'images/otter_icon.png' %}" alt="Foto de perfil padrão" class="follower-img">
+                        {% endif %}
+                    </div>
+                    <div class="follower-info">
+                        <p>@{{ follower.username }}</p>
+                        <p>{{ follower.profile.bio|slice:":20" }}...</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
 
+        <div id="following-section" class="profile-section" style="display: none;">
+            <!-- Conteúdo do "Seguindo" -->
+            {% for followed in following %}
+                <div class="followed">
+                    <div class="followed-image">
+                        {% if followed.profile.profile_picture %}
+                            <img src="{{ followed.profile.profile_picture.url }}" alt="Foto de perfil" class="followed-img">
+                        {% else %}
+                            <img src="{% static 'images/otter_icon.png' %}" alt="Foto de perfil padrão" class="followed-img">
+                        {% endif %}
+                    </div>
+                    <div class="followed-info">
+                        <p>@{{ followed.username }}</p>
+                        <p>{{ followed.profile.bio|slice:":20" }}...</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    <!-- Scripts para alternar entre Publicações e Comentários -->
 
+    <script>
+    function showSection(sectionId) {
+        // Oculta todas as seções
+        const sections = document.querySelectorAll('.profile-section');
+        sections.forEach(section => section.style.display = 'none');
 
-<!-- Comentários - oculto por padrão -->
-    <!-- Comentários - oculto por padrão -->
-    <div id="comments" class="profile-section" style="display: none;">
-        {% for comment in comments %}
-            <div class="post-item">
-                <h4>{{ comment.post.title }}</h4>
-                <p>{{ comment.body|safe }}...</p>
-                <a href="{% url 'post_detail' id=comment.post.id %}" class="btn">Ver Publicação</a>
-            </div>
-        {% endfor %}
-    </div>
-</div>
-
-
-<!-- Scripts para alternar entre Publicações e Comentários -->
-<script>
-    // Função para mostrar a seção selecionada
-    function showSection(section) {
-        // Esconde todas as seções
-        var sections = document.querySelectorAll('.profile-section');
-        sections.forEach(function (el) {
-            el.style.display = 'none';
-        });
-        
-        // Mostra a seção clicada
-        var sectionToShow = document.getElementById(section);
-        if (sectionToShow) {
-            sectionToShow.style.display = 'block';
+        // Exibe apenas a seção correspondente ao ID fornecido
+        const selectedSection = document.getElementById(sectionId);
+        if (selectedSection) {
+            selectedSection.style.display = 'block';
         }
     }
 </script>
@@ -98,154 +130,210 @@
 
 
 
-<style>
-    .post-item {
-        background-color: #f0f0f0;
-        margin: 10px;
+
+    <style>
+        .post-item {
+            background-color: #f0f0f0;
+            margin: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 20px; /* Adicionando a unidade px */
+        }
+        
+        .post-item:hover {
+            background-color: #dbdbdb; /* Corrigindo o nome da classe para .post-item */
+        }
+        
+
+        .profile-image-container {
+            position: relative;
+            display: inline-block;
+            margin-right: 20px;
+        }
+        
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+        
+        .edit-profile-image {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+        
+        .camera-icon {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+
+    .profile-container {
+        max-width: 800px;
+        margin: auto;
+        color: #000;
+        background-color: #f8f9fa; /* Cor de fundo clara para o contêiner de perfil */
         padding: 20px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 20px; /* Adicionando a unidade px */
+        margin-bottom: 30px;
+        border-radius: 8px; /* Bordas arredondadas no contêiner */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para destaque */
     }
-    
-    .post-item:hover {
-        background-color: #dbdbdb; /* Corrigindo o nome da classe para .post-item */
+
+    .profile-header {
+        display: flex;
+        align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #ddd;
     }
-    
+
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 20px;
+        border: 2px solid #ddd; /* Borda leve ao redor da imagem */
+    }
+
+    .profile-info h2 {
+        font-size: 24px;
+        color: #333;
+    }
+
+    .btn {
+        background-color: #ddd;
+        color: #333;
+        padding: 8px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+        margin-right: 8px;
+    }
+
+    .btn:hover {
+        background-color: #ccc;
+    }
+
+    .profile-stats, .profile-details {
+        color: #555;
+    }
+
+    .profile-navigation {
+        display: flex;
+        justify-content: space-around;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+        margin-top: 20px;
+    }
+
+    .nav-item {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .nav-item:hover {
+        color: #666;
+    }
 
     .profile-image-container {
         position: relative;
         display: inline-block;
-        margin-right: 20px;
+        width: 120px;
+        height: 120px;
     }
-    
+
     .profile-image {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%; /* Deixa a imagem redonda */
+        object-fit: cover;
+        border: 2px solid #ddd;
     }
-    
+
     .edit-profile-image {
         position: absolute;
-        bottom: 10px;
-        right: 10px;
+        bottom: 5px;
+        right: 5px;
+        width: 30px;
+        height: 30px;
+        background-color: #f1f1f1; /* Cor de fundo do ícone */
+        border-radius: 50%; /* Deixa o ícone redondo */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        font-size: 16px;
+        color: #333; /* Cor do ícone */
+        text-decoration: none;
+    }
+
+    .edit-profile-image:hover {
+        background-color: #ddd; /* Mudança de cor no hover */
+    }
+
+    .edit-profile-image i {
+        margin: 0;
+        padding: 0;
+    }
+
+    .followers-section, .following-section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
     }
     
-    .camera-icon {
-        width: 25px;
-        height: 25px;
-        cursor: pointer;
+    .follower, .followed {
+        display: flex;
+        align-items: center;
+        background-color: #f0f0f0;
+        margin: 10px;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s ease-in-out;
     }
+    
+    .follower:hover, .followed:hover {
+        background-color: #dbdbdb;
+    }
+    
+    .follower-image, .followed-image {
+        margin-right: 15px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    
+    .follower-img, .followed-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .follower-info, .followed-info {
+        display: flex;
+        flex-direction: column;
+        color: #333;
+    }
+    
+    .follower-info p, .followed-info p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+    
+    .follower-info p:first-child, .followed-info p:first-child {
+        font-weight: bold;
+        color: #555;
+    }
+    
 
-.profile-container {
-    max-width: 800px;
-    margin: auto;
-    color: #000;
-    background-color: #f8f9fa; /* Cor de fundo clara para o contêiner de perfil */
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 8px; /* Bordas arredondadas no contêiner */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para destaque */
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-}
-
-.profile-image {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 20px;
-    border: 2px solid #ddd; /* Borda leve ao redor da imagem */
-}
-
-.profile-info h2 {
-    font-size: 24px;
-    color: #333;
-}
-
-.btn {
-    background-color: #ddd;
-    color: #333;
-    padding: 8px 12px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 14px;
-    margin-right: 8px;
-}
-
-.btn:hover {
-    background-color: #ccc;
-}
-
-.profile-stats, .profile-details {
-    color: #555;
-}
-
-.profile-navigation {
-    display: flex;
-    justify-content: space-around;
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
-    margin-top: 20px;
-}
-
-.nav-item {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-    font-size: 14px;
-    padding: 8px;
-}
-
-.nav-item:hover {
-    color: #666;
-}
-
-.profile-image-container {
-    position: relative;
-    display: inline-block;
-    width: 120px;
-    height: 120px;
-}
-
-.profile-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%; /* Deixa a imagem redonda */
-    object-fit: cover;
-    border: 2px solid #ddd;
-}
-
-.edit-profile-image {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    width: 30px;
-    height: 30px;
-    background-color: #f1f1f1; /* Cor de fundo do ícone */
-    border-radius: 50%; /* Deixa o ícone redondo */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-    color: #333; /* Cor do ícone */
-    text-decoration: none;
-}
-
-.edit-profile-image:hover {
-    background-color: #ddd; /* Mudança de cor no hover */
-}
-
-.edit-profile-image i {
-    margin: 0;
-    padding: 0;
-}
-
-</style>
-{% endblock %}
+    </style>
+    {% endblock %}

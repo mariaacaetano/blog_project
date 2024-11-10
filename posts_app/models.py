@@ -9,7 +9,7 @@ class Posts(models.Model):
     title = models.CharField(max_length=100)
     description = RichTextField(default="")
     image = models.ImageField(upload_to='images/')
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)
     tag = models.ForeignKey("PostTag", on_delete=models.SET_NULL, null=True, blank=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Like', related_name='liked_posts', blank=True)
@@ -41,7 +41,7 @@ class PostTag(models.Model):
 
 class Comments(models.Model):
     body = RichTextField()
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     created_at = models.DateTimeField(auto_now_add=True)
     post = models.ForeignKey(Posts, on_delete=models.CASCADE, null=True)
 

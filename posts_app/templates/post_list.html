@@ -5,7 +5,7 @@
 {% block content %}
 	<!-- <a class="btn btn-success" href="{% url 'post_create' %}">Criar um Post</a> -->
 
-	<div class="jumbotron p-2 p-md-5 text-white rounded bg-dark text-center">
+	<div class="jumbotron p-2 p-md-5 text-white rounded text-center" style=" background-color: #5d243a">
 		<div class="col-md-8 mx-auto px-0">
 			<h1 class="display-4 font-italic" style="font-size: 40px">Bem-vindo ao Django Blog Project.</h1>
 			<p class="lead my-3">
@@ -25,30 +25,45 @@
 			</div>
 		</div>
 	</div>
-			
 	
 	<div class="row row-cols-1 row-cols-md-3 g-4" style="padding-top: 20px;">
-				{% for post in posts %} 
-				<div class="col">
-					<div class="card h-100 text-bg-light">
-						<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="width: 100%; height: 150px; object-fit: cover;">
-						<div class="card-body">
-							{% if post.tag.tag_name == "EDUCAÇÃO" %}
-								<p class="card-text" style="font-size: 13px; color: red"><span class="badge bg-info">{{ post.tag }}</span></p>
-							{% elif post.tag.tag_name == "ENTRETENIMENTO" %}
-								<p class="card-text" style="font-size: 13px; color: green"><span class="badge bg-warning">{{ post.tag }}</span></p>
-							{% endif %}
-							<h3 class="card-text"><strong>{{ post.title }}</strong></h3>
-							<p class="card-text" style="font-size:13px">{{ post.create_at }}</p>
-							<p class="card-text card-text-default" style="font-size: 15px;">{{ post.description|slice:":100"|safe }}...</p>
-							<a class="btn btn-secondary" href="{% url 'post_detail' post.id %}" style="font-size: 15px;">Leia Mais</a>
-						</div>
-					</div> 
+		{% for post in posts %}
+		<div class="col">
+			<div class="card h-100 text-bg-light">
+				<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="width: 100%; height: 150px; object-fit: cover;">
+				<div class="card-body">
+					{% if post.tag.tag_name == "EDUCAÇÃO" %}
+						<p class="card-text" style="font-size: 13px; color: red"><span class="badge bg-info">{{ post.tag }}</span></p>
+					{% elif post.tag.tag_name == "ENTRETENIMENTO" %}
+						<p class="card-text" style="font-size: 13px; color: green"><span class="badge bg-warning">{{ post.tag }}</span></p>
+					{% endif %}
+					<h3 class="card-text"><strong>{{ post.title }}</strong></h3>
+					<p class="card-text" style="font-size:13px">{{ post.create_at }}</p>
+					<p class="card-text card-text-default" style="font-size: 15px;">{{ post.description|slice:":100"|safe }}...</p>
+					<a class="btn btn-secondary" href="{% url 'post_detail' post.id %}" style="font-size: 15px;">Leia Mais</a>
 				</div>
-				{% endfor %} 
-			</div>	 
+			</div> 
+		</div>
+		{% endfor %} 
 	</div>
 
+	<!-- Adicionando controles de Paginação -->
+	<div class="pagination">
+		{% if posts.has_previous %}
+			<a href="?page=1">&laquo; Primeira</a>
+			<a href="?page={{ posts.previous_page_number }}">Anterior</a>
+		{% endif %}
+		
+		<span class="current">
+			Página {{ posts.number }} de {{ posts.paginator.num_pages }}
+		</span>
+
+		{% if posts.has_next %}
+			<a href="?page={{ posts.next_page_number }}">Próxima</a>
+			<a href="?page={{ posts.paginator.num_pages }}">Última &raquo;</a>
+		{% endif %}
+	</div>
+	
 	<style>
 		.card-text-default {
 			font-size: 15px;
@@ -56,5 +71,23 @@
 			font-weight: normal; /* Altere o peso, se necessário */
 			line-height: 1.5; /* Para dar um bom espaçamento entre as linhas */
 		}
+
+		/* Estilo para os controles de paginação */
+		.pagination {
+			display: flex;
+			justify-content: center;
+			padding: 10px;
+		}
+
+		.pagination a {
+			margin: 0 5px;
+			text-decoration: none;
+			color: #007bff;
+		}
+
+		.pagination .current {
+			font-weight: bold;
+		}
 	</style>
+
 {% endblock content %}

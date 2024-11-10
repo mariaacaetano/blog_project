@@ -11,23 +11,31 @@ from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.views import generic
+from django.db.models import Q
 from .models import Posts, Comments, Profile, Like, CommentLike, Follow
-from .forms import PostsForm, UserProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm, CustomUserCreationForm
-
-
+from .forms import PostsForm, UserProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm, CustomUserCreationForm, SearchForm
 # Create your views here.# views.py
 from django.shortcuts import render
 from .models import Posts, PostTag
+from django.core.paginator import Paginator
 
 def post_list(request):
-    template_name = 'post_list.html'  # template
-    posts = Posts.objects.all()  # consulta com todas as postagens
-    tags = PostTag.objects.all()  # consulta com todas as tags
-    context = {  # cria o contexto para passar para o template
-        'posts': posts,
-        'tags': tags,  # adiciona as tags ao contexto
+    template_name = 'post_list.html'  # Template
+    posts = Posts.objects.all()  # Consulta com todas as postagens
+    tags = PostTag.objects.all()  # Consulta com todas as tags
+
+    # Paginação
+    paginator = Paginator(posts, 15)  # Exibe 15 posts por página
+    page_number = request.GET.get('page')  # Obtém o número da página atual
+    page_obj = paginator.get_page(page_number)  # Obtém a página solicitada
+
+    context = {  # Cria o contexto para passar para o template
+        'posts': page_obj,  # Passa apenas a página atual
+        'tags': tags,  # Adiciona as tags ao contexto
     }
-    return render(request, template_name, context)  # renderiza o template com o contexto
+    
+    return render(request, template_name, context)  # Renderiza o template com o contexto
+
 
 
 def educacao_list(request):
@@ -184,32 +192,31 @@ class SignUpView(generic.CreateView):
 
 
 @login_required
-def profile_view(request, username=None):
-    # Se o 'username' for fornecido, obtém o perfil do outro usuário, senão o usuário logado
-    if username:
-        user = get_object_or_404(User, username=username)
-    else:
-        user = request.user
+def profile_view(request, username):
+    username = request.user.username
+    user = User.objects.get(username=username)
+    profile = user.profile
+    followers = user.profile.followers.all()  # Usuários que seguem este perfil
+    following = user.profile.following.all()  # Usuários que este perfil segue
 
-    profile = user.profile  # Obtém o perfil do usuário
+    posts = user.posts.all()  # Exemplo de como obter as postagens
+    comments = user.comments.all()  # Exemplo de como obter os comentários
 
-    # Contadores de seguidores e seguidos
-    followers_count = profile.followers.count()
-    following_count = profile.following.count()
+    followers_count = followers.count()
+    following_count = following.count()
 
-    # Obter as publicações e comentários do usuário
-    posts = Posts.objects.filter(author=user)
-    comments = Comments.objects.filter(author=user)
-
-    # Passa as informações para o template
-    return render(request, 'profile.html', {
-        'user': user,
+    context = {
         'profile': profile,
+        'user': user,
+        'posts': posts,
+        'comments': comments,
+        'followers': followers,
+        'following': following,
         'followers_count': followers_count,
         'following_count': following_count,
-        'posts': posts,
-        'comments': comments
-    })
+    }
+
+    return render(request, 'profile.html', context)
 
 
 
@@ -222,34 +229,37 @@ def edit_profile_picture(request):
             # Use a imagem cortada para atualizar o campo profile_picture do modelo
             profile.profile_picture = form.cleaned_data['cropped_image']
             profile.save()
-            return redirect('profile')  # Redireciona para a página de perfil após salvar
+            return redirect('profile', username=request.user.username)  # Redireciona para a página de perfil após salvar
     else:
         form = ProfilePictureForm()
 
     return render(request, 'edit_profile_picture.html', {'form': form})
 
+
+
 @login_required
 def edit_profile_info(request):
-    # Verificando se o método é POST (quando o formulário foi enviado)
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, user=request.user)
         if form.is_valid():
             form.save()  # Salvando as alterações no formulário
-            return redirect('profile')  # Redireciona para o perfil após salvar
+            return redirect('profile', username=request.user.username)  # Redireciona para o perfil após salvar
     else:
         form = ProfileEditForm(user=request.user)  # Criando o formulário e passando o usuário logado
 
     return render(request, 'edit_profile_info.html', {'form': form})  # Renderizando a página com o formulário
+
 @login_required
 def like_post(request, post_id):
     post = get_object_or_404(Posts, id=post_id)
 
-    # Verifica se o usuário já curtiu este post
-    if not Like.objects.filter(user=request.user, post=post).exists():
-        # Cria uma nova curtida
-        Like.objects.create(user=request.user, post=post)
-
-    return redirect('post_detail', id=post.id)
+    if request.user.is_authenticated:
+        # Verifica se o usuário já curtiu o post
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)  # Descurte
+        else:
+            post.likes.add(request.user)  # Curte
+    return redirect('post_detail', id=post.id) 
 
 
 @login_required
@@ -265,8 +275,6 @@ def like_comment(request, comment_id):
 
 
 
-
-# Exibe o perfil do autor e verifica se o usuário logado está seguindo
 def author_profile(request, username):
     author = get_object_or_404(User, username=username)
     author_profile = author.profile
@@ -279,9 +287,18 @@ def author_profile(request, username):
     post_count = posts.count()
     comments = Comments.objects.filter(author=author)
 
-    # Passa para o template as informações do autor e se está seguindo ou não
-    # Dentro da view author_profile
+    # Obtém a lista de seguidores e seguidos do autor
+    followers = author_profile.followers.all()
+    following = author_profile.following.all()
+    
+    followers_count = followers.count()
+    following_count = following.count()
 
+    # Debug: Verifique se os seguidores estão sendo carregados corretamente
+    print("Followers:", followers)
+    print("Following:", following)
+
+    # Passa para o template as informações do autor
     return render(request, 'author_profile.html', {
         'author': author,
         'author_profile': author_profile,
@@ -289,7 +306,10 @@ def author_profile(request, username):
         'posts': posts,
         'post_count': post_count,
         'comments': comments,
-        'user_to_unfollow': author  # Passe o autor como user_to_unfollow
+        'followers': followers,
+        'following': following,
+        'followers_count': followers_count,
+        'following_count': following_count
     })
 
 
@@ -334,8 +354,23 @@ def unfollow_user(request, username):
 
 
 
-
-
+def search(request):
+    query = request.GET.get('query', '')
+    users = []
+    posts = []
+    
+    if query:
+        # Pesquisar posts (pelo título, descrição e autor)
+        posts = Posts.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query) | Q(author__username__icontains=query)
+        )
+        
+        # Pesquisar usuários (pelo nome de usuário e outros campos, como o nome completo)
+        users = User.objects.filter(
+            Q(username__icontains=query) | Q(first_name__icontains=query) | Q(last_name__icontains=query)
+        )
+    
+    return render(request, 'search_results.html', {'posts': posts, 'users': users, 'query': query})
 
 
 def pages_entretenimento(request):

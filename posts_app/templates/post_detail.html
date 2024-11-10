@@ -25,11 +25,12 @@
                                 <p><a href="{% url 'login' %}">Faça login para curtir</a></p>
                             {% endif %}
                         </div>
+                        
                 <p class="post-date">{{ post.create_at|date:"d M, Y" }}</p>
                 <div class="image-container">
                     <img src="{{ post.image.url }}" alt="{{ post.title }}">
                 </div>
-                <p class="post-author">Escrito por <strong><a href="{% url 'author_profile' username=post.author.username %}">@{{ post.author.username}}</strong></a>
+                <p class="post-author">Escrito por <strong><a href="{% url 'author_profile' username=post.author.username %}">@{{post.author.username}}</a>
                 </strong></p>
             </p>
                 
@@ -42,10 +43,7 @@
             {% if request.user == post.author or request.user.is_staff %}
                 <div class="post-actions text-center">
                     <a class="btn btn-info" href="{% url 'post_update' post.id %}">Atualizar</a>
-                    
-                    <button type="button" class="btn btn-danger" id="deletePostButton">
-                        Deletar Postagem
-                      </button>
+                    <a class="btn btn-danger" href="{% url 'post_delete' post.id %}">Deletar</a>
                 </div>
             {% endif %}
         </div>
@@ -82,66 +80,27 @@
 
             <!-- Botão para mostrar o formulário de comentário -->
             {% if user.is_authenticated %}
-                <button id="show-comment-form-btn" class="btn btn-primary">Escrever um comentário</button>
+                <p><br></p>
+                <button id="show-comment-form-btn" class="btn btn-secondary">Escrever um comentário</button>
             {% endif %}
 
             <!-- Formulário de Comentário oculto inicialmente -->
-            <div id="comment-form-container" style="display: none; margin-top: 15px;">
+            <div id="comment-form-container" style="margin-top: 15px;">
                 <h3 class="section-title">Adicionar um Comentário</h3>
                 <form method="post" class="comment-form">
                     {% csrf_token %}
                     {{ comment_form.as_p }}
-                    <button type="submit" class="btn btn-success">Enviar Comentário</button>
+                    
+                <button type="submit" class="button">Enviar</button>
                 </form>
+                
             </div>
         </div>
     </div>
 </div>
 
-<!-- Caixa de diálogo personalizada (modal) -->
-<div id="deleteModal" class="delete-modal" style="display: none;">
-    <div class="delete-modal-content">
-      <h5>Você tem certeza que deseja deletar este post?</h5>
-      <form method="post">
-        {% csrf_token %}
-        <button class="btn btn-danger" type="submit">Sim, Deletar</button>
-      </form>
-      <button class="btn btn-secondary" id="closeModalButton">Cancelar</button>
-    </div>
-    
-  </div>    
-  
-  <!-- Botão Voltar -->
-  <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-info">Voltar</a>
-
 <!-- Estilos -->
 <style>
-    .delete-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Fundo semitransparente */
-        justify-content: center;
-        align-items: center;
-        z-index: 1000; /* Coloca o modal por cima de outros elementos */
-      }
-    
-      .delete-modal-content {
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-        max-width: 500px;
-        width: 80%;
-      }
-    
-      .btn {
-        margin: 5px;
-      }
-
     .liked-button {
         color: red;
         font-weight: bold;
@@ -157,6 +116,7 @@
     .like-button {
         margin-top: 10px;
     }
+    
 
     
     .blog-container {
@@ -249,19 +209,7 @@
         display: inline;
     }
 
-    /* Formulário de comentário */
-    .comment-form button {
-        background-color: #28a745;
-        border: none;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-    .comment-form button:hover {
-        background-color: #218838;
-    }
+   
 
     /* Responsividade */
     @media (max-width: 992px) {
@@ -276,6 +224,101 @@
             padding-left: 0;
         }
     }
+    
+  /* From Uiverse.io by zjssun */ 
+  .button {
+    position: relative;
+    padding: 10px 10px;
+    border-radius: 6px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    background-color: #ee7abe;
+    transition: all 0.2s ease;
+  }
+  
+  .button:active {
+    transform: scale(0.96);
+  }
+  
+  .button:before,
+  .button:after {
+    position: absolute;
+    content: "";
+    width: 150%;
+    left: 50%;
+    height: 100%;
+    transform: translateX(-50%);
+    z-index: -1000;
+    background-repeat: no-repeat;
+  }
+  
+  .button:hover:before {
+    top: -70%;
+    background-image: radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, transparent 20%, #ee7abe 20%, transparent 30%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, transparent 10%, #ee7abe 15%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%);
+    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%,
+      10% 10%, 18% 18%;
+    background-position: 50% 120%;
+    animation: greentopBubbles 0.6s ease;
+  }
+  
+  @keyframes greentopBubbles {
+    0% {
+      background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%,
+        40% 90%, 55% 90%, 70% 90%;
+    }
+  
+    50% {
+      background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%,
+        50% 50%, 65% 20%, 90% 30%;
+    }
+  
+    100% {
+      background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%,
+        50% 40%, 65% 10%, 90% 20%;
+      background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+    }
+  }
+  
+  .button:hover::after {
+    bottom: -70%;
+    background-image: radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, transparent 10%, #ee7abe 15%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%),
+      radial-gradient(circle, #ee7abe 20%, transparent 20%);
+    background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 20% 20%, 18% 18%;
+    background-position: 50% 0%;
+    animation: greenbottomBubbles 0.6s ease;
+  }
+  
+  @keyframes greenbottomBubbles {
+    0% {
+      background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%,
+        70% -10%, 70% 0%;
+    }
+  
+    50% {
+      background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%,
+        105% 0%;
+    }
+  
+    100% {
+      background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%,
+        110% 10%;
+      background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+    }
+  }
 </style>
 
 <!-- Scripts adicionais -->
@@ -295,24 +338,6 @@
             }
         });
     </script>
-    <!-- Script para exibir e esconder o modal -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const deletePostButton = document.getElementById('deletePostButton');
-      const deleteModal = document.getElementById('deleteModal');
-      const closeModalButton = document.getElementById('closeModalButton');
-  
-      // Quando o botão "Deletar Postagem" for clicado, exibe o modal
-      deletePostButton.addEventListener('click', function() {
-        deleteModal.style.display = 'flex'; // Exibe o modal
-      });
-  
-      // Quando o botão "Cancelar" for clicado, fecha o modal
-      closeModalButton.addEventListener('click', function() {
-        deleteModal.style.display = 'none'; // Esconde o modal
-      });
-    });
-  </script>
 {% endblock extra_js %}
 
 {% endblock content %}

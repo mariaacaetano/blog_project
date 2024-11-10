@@ -21,6 +21,48 @@
 		
 
 		<style>
+			/* From Uiverse.io by akshat-patel28 */ 
+			.button-container {
+			display: flex;
+			background-color: rgba(245, 73, 144);
+			width: 250px;
+			height: 40px;
+			align-items: center;
+			justify-content: space-around;
+			border-radius: 10px;
+			box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px,
+					rgba(245, 73, 144, 0.5) 5px 10px 15px;
+			}
+
+			.button {
+			outline: 0 !important;
+			border: 0 !important;
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background-color: transparent;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			transition: all ease-in-out 0.3s;
+			cursor: pointer;
+			}
+
+			.button:hover {
+			transform: translateY(-3px);
+			}
+
+			.icon {
+			font-size: 20px;
+			}
+
+
+
+
+
+
+
 			body, html {
 				height: 100%;
 				margin: 0;
@@ -99,11 +141,5 @@
 		<a href="{% if user.is_authenticated %}{% url 'post_create' %}{% else %}{% url 'signup' %}?message=Cadastre-se%20agora%20mesmo%20para%20escrever%20posts%20incríveis{% endif %}" class="floating-button">
 			+
 		</a>
-		
-
-		<footer class="jumbotron p-2 p-md-5 text-center" style="display:flex; padding-top: 50px; justify-content: center">
-			<a href="#">Back to top</a> 
-		</footer>
-		
 	</body>
 </html>
