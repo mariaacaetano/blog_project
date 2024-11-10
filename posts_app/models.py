@@ -33,7 +33,6 @@ class Like(models.Model):
 class PostTag(models.Model):
     tag_name = models.CharField(max_length=50)
     tag_description = models.CharField(max_length=255)
-    tag_icon = models.ImageField(null=True)
     
     def __str__(self):
         return self.tag_name

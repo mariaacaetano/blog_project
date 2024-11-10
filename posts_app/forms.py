@@ -1,5 +1,5 @@
 from django import forms
-from .models import Posts, Comments, Profile
+from .models import Posts, Comments, Profile, PostTag
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
@@ -113,3 +113,10 @@ class ProfilePictureForm(forms.ModelForm):
 
 class SearchForm(forms.Form):
     query = forms.CharField(max_length=255, required=False, label="Pesquisar")
+    
+    
+
+class PostTagForm(forms.ModelForm):
+    class Meta:
+        model = PostTag
+        fields = ['tag_name','tag_description']

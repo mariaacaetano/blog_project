@@ -13,8 +13,8 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.views import generic
 from django.db.models import Q
-from .models import Posts, Comments, Profile, Like, CommentLike, Follow
-from .forms import PostsForm, UserProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm, CustomUserCreationForm, SearchForm
+from .models import Posts, Comments, Profile, Like, CommentLike, Follow, PostTag
+from .forms import PostsForm, UserProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm, CustomUserCreationForm, SearchForm, PostTagForm
 # Create your views here.# views.py
 from django.shortcuts import render
 from .models import Posts, PostTag
@@ -451,3 +451,47 @@ def pages_tecnologia(request):
         'posts': posts,
     }
     return render(request, template_name, context)
+
+@login_required
+def settings_tags(request):
+    tags = PostTag.objects.all()  # Pega todas as tags existentes
+    
+    if request.method == 'POST':
+        if 'add_tag' in request.POST:
+            form = PostTagForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Tag adicionada com sucesso.')
+            else:
+                messages.error(request, 'Erro ao adicionar tag.')
+        
+        # Atualizar a tag
+        elif 'update_tag' in request.POST:
+            tag_id = request.POST.get('tag_id')
+            tag = get_object_or_404(PostTag, id=tag_id)
+            form = PostTagForm(request.POST, instance=tag)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Tag atualizada com sucesso.')
+            else:
+                messages.error(request, 'Erro ao atualizar a tag.')
+        
+        # Excluir a tag
+        elif 'delete_tag' in request.POST:
+            tag_id = request.POST.get('delete_tag')
+            try:
+                tag = PostTag.objects.get(id=tag_id)
+                tag.delete()
+                messages.success(request, 'Tag removida com sucesso.')
+            except PostTag.DoesNotExist:
+                messages.error(request, 'Tag não encontrada.')
+
+        return redirect('settings_tags')  # Redireciona para a página de configurações após o POST
+
+    # Caso não seja POST, cria um formulário para adicionar ou editar
+    form = PostTagForm()
+    context = {
+        'tags': tags,
+        'form': form,
+    }
+    return render(request, 'settings_tags.html', context)

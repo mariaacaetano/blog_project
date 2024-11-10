@@ -19,7 +19,7 @@
         
         <!-- Item para is_staff -->
         {% if user.is_staff %}
-            <li class="configurations"><a href="#configuracoes" onclick="toggleMenu()">Configurações</a></li>
+            <li class="configurations"><a href="{% url 'settings_tags' %}" onclick="toggleMenu()">Configurações</a></li>
         {% endif %}
     </ul>
 </div>

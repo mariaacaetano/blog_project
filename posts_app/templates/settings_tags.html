@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+
+
+{% block title %}Configurações de Tags{% endblock %}
+
+{% block content %}
+    <p class="title">Adicionar Nova Tag</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label">
+                {{ form.tag_name }}
+                <span class="label-text">Nome</span>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">
+                {{ form.tag_description }}
+                <span class="label-text">Descrição</span>
+            </label>
+        </div>
+
+        <button type="submit" name="add_tag" class="button">Adicionar</button>
+    </form>
+
+    <div>
+        <p></p>
+        <hr>
+    <div>
+
+    <p class="title">Tags Existentes</p>
+    <div class="tags-list">
+        {% for tag in tags %}
+            <div class="tag-item">
+                <h5><strong>{{ tag.tag_name }}:</strong> {{ tag.tag_description }}</h5>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="tag_id" value="{{ tag.id }}">
+
+                    <label class="form-label">
+                        {{ form.tag_name }}
+                        <span class="label-text">Nome</span>
+                    </label>
+                    <label class="form-label">
+                        {{ form.tag_description }}
+                        <span class="label-text">Descrição</span>
+                    </label>
+                    <div style="display: flex; padding: 10px">
+                        <div>
+                            <button type="submit" name="update_tag" class="button">Atualizar</button>
+                        </div>
+                        <div style="padding-left:10px">
+                            <form method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" name="delete_tag" value="{{ tag.id }}" class="button">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% empty %}
+            <p>Não há tags cadastradas.</p>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <p><br><br></p>
+    </footer>
+
+
+
+
+
+
+
+
+
+
+        <style>
+        
+            .title {
+                font-size: 28px;
+                color: #ee7abe;
+                font-weight: 600;
+                letter-spacing: -1px;
+                position: relative;
+                display: flex;
+                align-items: center;
+                padding-left: 30px;
+                }
+            
+                .title::before,.title::after {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                border-radius: 50%;
+                left: 0px;
+                background-color: #ee7abe;
+                }
+            
+                .title::before {
+                width: 18px;
+                height: 18px;
+                background-color: #ee7abe;
+                }
+            
+                .title::after {
+                width: 18px;
+                height: 18px;
+                animation: pulse 1s linear infinite;
+                }
+        
+                .title-mini {
+                    font-size: 20px;
+                    color: #e392e2;
+                    font-weight: 600;
+                    letter-spacing: -1px;
+                    position: relative;
+                    display: flex;
+                    padding-left: 30px;
+                    }
+                
+                    @keyframes pulse {
+                    from {
+                        transform: scale(0.9);
+                        opacity: 1;
+                    }
+                
+                    to {
+                        transform: scale(1.8);
+                        opacity: 0;
+                    }
+                    }
+        
+                    /* From Uiverse.io by zjssun */ 
+                    .button {
+                    position: relative;
+                    padding: 10px 100px;
+                    border-radius: 6px;
+                    border: none;
+                    color: #fff;
+                    cursor: pointer;
+                    background-color: #ee7abe;
+                    transition: all 0.2s ease;
+                    }
+                    
+                    .button:active {
+                    transform: scale(0.96);
+                    }
+                    
+                    .button:before,
+                    .button:after {
+                    position: absolute;
+                    content: "";
+                    width: 150%;
+                    left: 50%;
+                    height: 100%;
+                    transform: translateX(-50%);
+                    z-index: -1000;
+                    background-repeat: no-repeat;
+                    }
+                    
+                    .button:hover:before {
+                    top: -70%;
+                    background-image: radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, transparent 20%, #ee7abe 20%, transparent 30%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, transparent 10%, #ee7abe 15%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%);
+                    background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%,
+                        10% 10%, 18% 18%;
+                    background-position: 50% 120%;
+                    animation: greentopBubbles 0.6s ease;
+                    }
+                    
+                    @keyframes greentopBubbles {
+                    0% {
+                        background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%,
+                        40% 90%, 55% 90%, 70% 90%;
+                    }
+                    
+                    50% {
+                        background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%,
+                        50% 50%, 65% 20%, 90% 30%;
+                    }
+                    
+                    100% {
+                        background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%,
+                        50% 40%, 65% 10%, 90% 20%;
+                        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+                    }
+                    }
+                    
+                    .button:hover::after {
+                    bottom: -70%;
+                    background-image: radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, transparent 10%, #ee7abe 15%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%),
+                        radial-gradient(circle, #ee7abe 20%, transparent 20%);
+                    background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 20% 20%, 18% 18%;
+                    background-position: 50% 0%;
+                    animation: greenbottomBubbles 0.6s ease;
+                    }
+                    
+                    @keyframes greenbottomBubbles {
+                    0% {
+                        background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%,
+                        70% -10%, 70% 0%;
+                    }
+                    
+                    50% {
+                        background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%,
+                        105% 0%;
+                    }
+                    
+                    100% {
+                        background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%,
+                        110% 10%;
+                        background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
+                    }
+                    }
+                
+                    /* Estilo geral do formulário */
+                .form-label {
+                    display: flex;
+                    flex-direction: column;
+                    margin-bottom: 20px; /* Adicionando espaçamento entre os campos */
+                    position: relative;
+                }
+                
+                /* Corrigir a largura do input renderizado pelo Django */
+                .form-label input {
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 16px;
+                    width: 100%; /* Garante que o input ocupe a largura total do label */
+                    margin-bottom: 5px; /* Adiciona espaçamento abaixo do input */
+                }
+                
+                /* Texto do label */
+                .label-text {
+                    font-size: 14px;
+                    color: #c67896;
+                    position: absolute;
+                    top: 0;
+                    left: 10px;
+                    transition: 0.3s ease all;
+                    background-color: white; /* Evita sobreposição com o input */
+                    padding: 0 5px;
+                    pointer-events: none;
+                    }
+                
+                    /* Quando o input estiver em foco, o texto do label sobe */
+                    .form-label input:focus + .label-text, 
+                    .form-label input:not(:placeholder-shown) + .label-text {
+                        top: -10px;
+                        font-size: 12px;
+                        color: #c67896; /* Cor do texto ao focar ou preencher */
+                    }
+                
+                    /* Corrige o espaçamento do texto quando o campo está preenchido */
+                    .form-label input:focus {
+                        border-color: #c67896;
+                        outline: none;
+                    }
+                
+                
+                    /* Input field */
+                    .input {
+                        padding: 10px;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        font-size: 16px;
+                        width: 100%; /* Preenche a largura do label */
+                        margin-bottom: 5px; /* Adiciona espaçamento abaixo do input */
+                    }
+                
+                    /* Texto do label */
+                    .label-text {
+                        font-size: 14px;
+                        color: #666;
+                        position: absolute;
+                        top: 0;
+                        left: 10px;
+                        transition: 0.3s ease all;
+                        background-color: white; /* Evita sobreposição com o input */
+                        padding: 0 5px;
+                        pointer-events: none;
+                    }
+                
+                    /* Quando o input estiver em foco, o texto do label sobe */
+                    .input:focus + .label-text, 
+                    .input:not(:placeholder-shown) + .label-text {
+                        top: -10px;
+                        font-size: 12px;
+                        color: #007bff; /* Cor do texto ao focar ou preencher */
+                    }
+                
+                    /* Corrige o espaçamento do texto quando o campo está preenchido */
+                    .input:focus {
+                        border-color: #007bff;
+                        outline: none;
+                    }
+                
+                    /* From Uiverse.io by Yaya12085 */ 
+                    .form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    max-width: 350px;
+                    background-color: #fff;
+                    padding: 20px;
+                    border-radius: 20px;
+                    position: relative;
+                    }
+                
+                    .title {
+                    font-size: 28px;
+                    color: #c67896;
+                    font-weight: 600;
+                    letter-spacing: -1px;
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    padding-left: 30px;
+                    }
+                
+                    .title::before,.title::after {
+                    position: absolute;
+                    content: "";
+                    height: 16px;
+                    width: 16px;
+                    border-radius: 50%;
+                    left: 0px;
+                    background-color: #c67896;
+                    }
+                
+                    .title::before {
+                    width: 18px;
+                    height: 18px;
+                    background-color: #c67896;
+                    }
+                
+                    .title::after {
+                    width: 18px;
+                    height: 18px;
+                    animation: pulse 1s linear infinite;
+                    }
+                
+                    .message, .signin {
+                        color: #000000;
+                        font-size: 14px;
+                    }
+                
+                    .signin {
+                    text-align: center;
+                    }
+                
+                    .signin a {
+                    color: #c67896;
+                    }
+                
+                    .signin a:hover {
+                    text-decoration: underline #c67896;
+                    }
+                
+                
+                
+                    .form label {
+                    position: relative;
+                    }
+                
+                    .form label .input {
+                    width: 100%;
+                    padding: 10px 10px 20px 10px;
+                    outline: 0;
+                    border: 1px solid rgba(105, 105, 105, 0.397);
+                    border-radius: 10px;
+                    }
+                
+                    .form label .input + span {
+                    position: absolute;
+                    left: 10px;
+                    top: 15px;
+                    color: grey;
+                    font-size: 0.9em;
+                    cursor: text;
+                    transition: 0.3s ease;
+                    }
+                
+                    .form label .input:placeholder-shown + span {
+                    top: 15px;
+                    font-size: 0.9em;
+                    }
+                
+                    .form label .input:focus + span,.form label .input:valid + span {
+                    top: 30px;
+                    font-size: 0.7em;
+                    font-weight: 600;
+                    }
+                
+                    .form label .input:valid + span {
+                    color: green;
+                    }
+                
+                    .submit {
+                        border: none;
+                        outline: none;
+                        background-color: #eeaec7;
+                        padding: 10px;
+                        border-radius: 10px;
+                        color: #000000;
+                        font-size: 16px;
+                        transform: .3s ease;
+                        width: auto; /* Ajuste para garantir que o botão tenha o tamanho adequado */
+                    }
+                    
+                
+                    .submit:hover {
+                    background-color: #c67896;
+                    }
+                
+                    @keyframes pulse {
+                    from {
+                        transform: scale(0.9);
+                        opacity: 1;
+                    }
+                
+                    to {
+                        transform: scale(1.8);
+                        opacity: 0;
+                    }
+                    }
+                </style>
+                
+    {% endblock %}
