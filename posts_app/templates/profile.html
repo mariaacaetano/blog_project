@@ -74,15 +74,14 @@
         </div>
 
                 
-        <div id="followers-section" class="profile-section" style="display: none;">
-            <!-- Conteúdo dos seguidores -->
+        <div id="followers" class="profile-section">
             {% for follower in followers %}
                 <div class="follower">
                     <div class="follower-image">
                         {% if follower.profile.profile_picture %}
                             <img src="{{ follower.profile.profile_picture.url }}" alt="Foto de perfil" class="follower-img">
                         {% else %}
-                            <img src="{% static 'images/otter_icon.png' %}" alt="Foto de perfil padrão" class="follower-img">
+                            <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="follower-img">
                         {% endif %}
                     </div>
                     <div class="follower-info">
@@ -92,16 +91,15 @@
                 </div>
             {% endfor %}
         </div>
-
-        <div id="following-section" class="profile-section" style="display: none;">
-            <!-- Conteúdo do "Seguindo" -->
+        
+        <div id="following" class="profile-section">
             {% for followed in following %}
                 <div class="followed">
                     <div class="followed-image">
                         {% if followed.profile.profile_picture %}
                             <img src="{{ followed.profile.profile_picture.url }}" alt="Foto de perfil" class="followed-img">
                         {% else %}
-                            <img src="{% static 'images/otter_icon.png' %}" alt="Foto de perfil padrão" class="followed-img">
+                            <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="followed-img">
                         {% endif %}
                     </div>
                     <div class="followed-info">
@@ -111,6 +109,7 @@
                 </div>
             {% endfor %}
         </div>
+        
     <!-- Scripts para alternar entre Publicações e Comentários -->
 
     <script>

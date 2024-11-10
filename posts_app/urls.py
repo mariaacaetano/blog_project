@@ -29,6 +29,12 @@ urlpatterns = [
     path('profile/<str:username>/', views.profile_view, name='profile'),
     path('author_profile/<str:username>/', views.author_profile, name='author_profile'),
 
-    
+    path('ciencia/', views.pages_ciencia, name='pages_ciencia'),
+    path('cultura/', views.pages_cultura, name='pages_cultura'),
+    path('design/', views.pages_design, name='pages_design'),
+    path('educacao/', views.pages_educacao, name='pages_educacao'),
     path('entretenimento/', views.pages_entretenimento, name='pages_entretenimento'),
+    path('politica/', views.pages_politica, name='pages_politica'),
+    path('saude/', views.pages_saude, name='pages_saude'),
+    path('tecnologia/', views.pages_tecnologia, name='pages_tecnologia'),
 ]
