@@ -27,32 +27,29 @@
                 </form>
             </div>
             <div class="profile-stats" style="padding-top:10px">
-                <span>3 publicações</span>
-                <span>440 seguidores</span>
-                <span>352 seguindo</span>
+                <span>{{ followers_count }} followers</span>
+                <span>{{ following_count }} following</span>
+
             </div>
             <div style="padding-top:10px">
                 <strong>{{ user.first_name }} {{ user.last_name }}</strong>
-                <div style='padding-top: 10px'>
-                    {{profile.bio}}
-                    {{profile.favorite_song}}
-                </div>
+                    <br>{{profile.bio}}
+                    <br><strong>Favorite Song:</strong>{{profile.favorite_song}}
             </div>
         </div>
     </div>
 
- <!-- Navegação do Perfil -->
- <div class="profile-navigation">
+  <!-- Navegação do Perfil -->
+  <!-- Navegação do Perfil -->
+<div class="profile-navigation">
     <a href="javascript:void(0);" class="nav-item" onclick="showSection('publications')">Publicações</a>
     <a href="javascript:void(0);" class="nav-item" onclick="showSection('comments')">Comentários</a>
-    <a href="#" class="nav-item">Curtidas</a>
-    <a href="#" class="nav-item">Seguidores</a>
 </div>
+
 
 <!-- Seções dinâmicas -->
 <!-- Publicações - visível por padrão -->
 <div id="publications" class="profile-section" style="display: block;">
-    <h3>Publicações</h3>
     {% for post in posts %}
         <div class="post-item">
             <h4>{{ post.title }}</h4>
@@ -62,18 +59,23 @@
     {% endfor %}
 </div>
 
+
+
+
+
 <!-- Comentários - oculto por padrão -->
-<div id="comments" class="profile-section" style="display: none;">
-    <h3>Comentários</h3>
-    {% for comment in comments %}
-        <div class="post-item">
-            <h4>{{ comment.post.title }}</h4>
-            <p>{{ comment.body|safe }}...</p>
-            <a href="{% url 'post_detail' id=comment.post.id %}" class="btn">Ver Publicação</a>
-        </div>
-    {% endfor %}
+    <!-- Comentários - oculto por padrão -->
+    <div id="comments" class="profile-section" style="display: none;">
+        {% for comment in comments %}
+            <div class="post-item">
+                <h4>{{ comment.post.title }}</h4>
+                <p>{{ comment.body|safe }}...</p>
+                <a href="{% url 'post_detail' id=comment.post.id %}" class="btn">Ver Publicação</a>
+            </div>
+        {% endfor %}
+    </div>
 </div>
-</div>
+
 
 <!-- Scripts para alternar entre Publicações e Comentários -->
 <script>

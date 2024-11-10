@@ -13,11 +13,15 @@
                         <div class="like-button">
                             {% if user.is_authenticated %}
                                 {% if is_liked %}
+                                
                                     <a href="{% url 'like_post' post.id %}" class="liked-button">❤️ Curtido</a>
+                                    <p><strong>{{ post.likes.count }} Curtidas</strong></p>
                                 {% else %}
                                     <a href="{% url 'like_post' post.id %}" class="not-liked-button">🤍 Curtir</a>
+                                    <p><strong>{{ post.likes.count }} Curtidas</strong></p>
                                 {% endif %}
                             {% else %}
+                                <p><strong>{{ post.likes.count }} Curtidas</strong></p>
                                 <p><a href="{% url 'login' %}">Faça login para curtir</a></p>
                             {% endif %}
                         </div>
@@ -25,7 +29,8 @@
                 <div class="image-container">
                     <img src="{{ post.image.url }}" alt="{{ post.title }}">
                 </div>
-                <p class="post-author">Escrito por <strong><p class="post-author">Escrito por <strong><a href="{% url 'author-profile' post.author.username %}">@{{ post.author.username }}</a></strong></p>
+                <p class="post-author">Escrito por <strong><p class="post-author">Escrito por <strong><a href="{% url 'author_profile' username=post.author.username %}">Ver perfil</a>
+                </strong></p>
             </p>
                 
             </div>
@@ -47,6 +52,8 @@
             <h2 class="section-title">Comentários</h2>
             <div class="comments-section">
                 {% for comment in comments %}
+                <!-- Exibição de post com curtidas -->
+        
                     <div class="comment-container">
                         <div class="comment-header">
                             <strong>@{{ comment.author.username }}</strong>

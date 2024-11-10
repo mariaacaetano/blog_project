@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.views import generic
-from .models import Posts, Comments, Profile
+from .models import Posts, Comments, Profile, Like, CommentLike, Follow
 from .forms import PostsForm, UserProfileForm, ProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm, CustomUserCreationForm
 
 
@@ -176,18 +176,33 @@ class SignUpView(generic.CreateView):
 
 
 @login_required
-def profile_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
+def profile_view(request, username=None):
+    if username is None:
+        username = request.user.username
     
-    # Buscar as publicações e os comentários do usuário
-    posts = Posts.objects.filter(author=request.user)
-    comments = Comments.objects.filter(author=request.user)
+    user = get_object_or_404(User, username=username)
+    profile = user.profile  # Obtendo o perfil associado ao usuário
+    posts = Posts.objects.filter(author=user)  # Obtendo posts feitos pelo usuário
+    comments = Comments.objects.filter(author=user)
+
+    # Obtendo seguidores e seguidos
+    followers = user.profile.followers.all()  # Acessando a lista de seguidores
+    following = user.profile.following.all()  # Acessando a lista de pessoas que o usuário está seguindo
+    
+    followers_count = user.followers.count()  # Seguindo a relação "followers"
+    following_count = user.following.count()  # Seguindo a relação "following"
 
     return render(request, 'profile.html', {
+        'user': user,
         'profile': profile,
         'posts': posts,
-        'comments': comments
+        'comments': comments,
+        'followers': followers,
+        'following': following,
+        'followers_count': followers_count,  # Adicionando contagem de seguidores
+        'following_count': following_count   # Adicionando contagem de seguidos
     })
+
 
 
 @login_required
@@ -221,31 +236,81 @@ def edit_profile_info(request):
 @login_required
 def like_post(request, post_id):
     post = get_object_or_404(Posts, id=post_id)
-    like, created = Like.objects.get_or_create(user=request.user, post=post)
-    if not created:
-        like.delete()  # Descurtir caso já esteja curtido
-    return redirect('post_detail', post_id=post.id)  # Direcione de volta ao post
+
+    # Verifica se o usuário já curtiu este post
+    if not Like.objects.filter(user=request.user, post=post).exists():
+        # Cria uma nova curtida
+        Like.objects.create(user=request.user, post=post)
+
+    return redirect('post_detail', id=post.id)
+
+
+@login_required
+def like_comment(request, comment_id):
+    comment = get_object_or_404(Comments, id=comment_id)
+
+    # Verifica se o usuário já curtiu este comentário
+    if not CommentLike.objects.filter(user=request.user, comment=comment).exists():
+        # Cria uma nova curtida
+        CommentLike.objects.create(user=request.user, comment=comment)
+
+    return redirect('post_detail', id=comment.post.id)
+
+
 
 def author_profile(request, username):
-    # Obtém o perfil do autor
-    author_profile = get_object_or_404(Profile, user__username=username)
+    # Obtém o perfil do autor com base no 'username' fornecido na URL
+    author = get_object_or_404(User, username=username)
+    author_profile = author.profile
 
     # Verifica se o usuário logado está seguindo o autor
-    is_following = request.user.profile.following.filter(id=author_profile.user.id).exists()
+    is_following = request.user.profile.following.filter(id=author.id).exists()
 
+    # Obtém as publicações feitas pelo autor
+    posts = Posts.objects.filter(author=author)
+    post_count = posts.count()
+    comments = Comments.objects.filter(author=author)
+
+    # Passa para o template as informações do autor e se está seguindo ou não
     return render(request, 'author_profile.html', {
+        'author': author,
         'author_profile': author_profile,
         'is_following': is_following,
+        'posts': posts,
+        'post_count': post_count,
+        'comments':comments
     })
 
+
+    
 @login_required
 def follow_user(request, username):
     user_to_follow = get_object_or_404(User, username=username)
-    request.user.profile.following.add(user_to_follow)
-    return redirect('author-profile', username=username)
+    profile = request.user.profile
+
+    # Seguir ou deixar de seguir
+    if user_to_follow in profile.following.all():
+        profile.following.remove(user_to_follow)
+    else:
+        profile.following.add(user_to_follow)
+
+    return redirect('profile', username=user_to_follow.username)
+
+
 
 @login_required
 def unfollow_user(request, username):
+    # Obtém o usuário a ser deixado de seguir
     user_to_unfollow = get_object_or_404(User, username=username)
-    request.user.profile.following.remove(user_to_unfollow)
-    return redirect('author-profile', username=username)
+
+    # Verificar se o usuário logado está tentando deixar de seguir alguém que não é ele mesmo
+    if request.user != user_to_unfollow:
+        # Encontrar a relação de follow entre o usuário logado e o usuário a ser deixado de seguir
+        follow = Follow.objects.filter(follower=request.user, followed=user_to_unfollow).first()
+        
+        # Se existir essa relação, deletar
+        if follow:
+            follow.delete()  # Remove o seguimento
+
+    # Redireciona de volta para o perfil do autor
+    return redirect('author_profile', username=username)

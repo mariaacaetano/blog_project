@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField  # Certifique-se de que o CKEditor está instalado corretamente
 
+
 # Modelos
 class Posts(models.Model):
     title = models.CharField(max_length=100)
@@ -48,6 +49,16 @@ class Comments(models.Model):
         return self.body
 
 
+class CommentLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
+        unique_together = ('user', 'comment')  # Impede múltiplas curtidas do mesmo usuário no mesmo comentário
+
+    def __str__(self):
+        return f"{self.user.username} liked {self.comment.body[:20]}"
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -56,7 +67,20 @@ class Profile(models.Model):
     favorite_song = models.CharField(max_length=255, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     temp_profile_picture = models.ImageField(upload_to='temp_profile_pics/', null=True, blank=True)  # Campo temporário
-    following = models.ManyToManyField(User, related_name='followers', blank=True)
+    followers = models.ManyToManyField(User, related_name='followers_set', blank=True)  # Relacionamento com seguidores
+    following = models.ManyToManyField(User, related_name='following_set', blank=True)  # Relacionamento com pessoas que o usuário segue
 
     def __str__(self):
         return self.user.username
+    
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+    followed = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('follower', 'followed')
+        
+    def __str__(self):
+        return f'{self.follower.username} follows {self.followed.username}'

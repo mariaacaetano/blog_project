@@ -1,7 +1,7 @@
-{% extends 'base.html'%}
-{% load static%}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Perfil do Autor{% endblock %}
+{% block title %}Meu Perfil{% endblock %}
 
 {% block content %}
 <div class="profile-container">
@@ -10,37 +10,65 @@
             {% if author_profile.profile_picture %}
                 <img src="{{ author_profile.profile_picture.url }}" alt="Foto do perfil" class="profile-image">
             {% else %}
-                <img src="{% static 'images/default_profile_picture.png' %}" alt="Foto de perfil padrão" class="profile-image">
+                <img src="{% static 'images/otter_icon.png' %}" alt="Foto de perfil padrão" class="profile-image">
             {% endif %}
         </div>
 
         <div class="profile-info">
             <h2>@{{ author_profile.user.username }}</h2>
-            <div class="profile-actions" style="display: flex">
-                {% if author_profile.user != user %}
-                    <form action="{% url 'follow' username=author_profile.user.username %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn">
-                            {% if is_following %}
-                                Deixar de Seguir
-                            {% else %}
-                                Seguir
-                            {% endif %}
-                        </button>
-                    </form>
-                {% endif %}
-            </div>
-            <div style="padding-top:10px">
-                <strong>{{ author_profile.user.first_name }} {{ author_profile.user.last_name }}</strong>
-                <p>{{ author_profile.bio }}</p>
-                <p>{{ author_profile.favorite_song }}</p>
-            </div>
+            <p>{{ author_profile.user.profile.followers.count }} followers | {{ author_profile.user.profile.following.count }} following
+                <br>
+            <br><strong>{{ author_profile.user.first_name }} {{ author_profile.user.last_name }}</strong>
+            <br>{{ author_profile.bio }}
+            <br><strong>Favorite Song:</strong> {{ author_profile.favorite_song }}</p>
+            
+            <!-- Botão de seguir abaixo de Favorite Song -->
+            {% if request.user != author_profile.user %}
+                <form method="POST" action="{% url 'follow_user' author_profile.user.username %}">
+                    {% csrf_token %}
+                    <button type="submit" class='btn btn-secondary'>
+                        {% if is_following %}
+                            Deixar de seguir
+                        {% else %}
+                            Seguir
+                        {% endif %}
+                    </button>
+                </form>
+            {% endif %}
         </div>
-    </div>
 </div>
 
 
+  <!-- Navegação do Perfil -->
+  <div class="profile-navigation">
+    <a href="javascript:void(0);" class="nav-item" onclick="showSection('publications')">Publicações</a>
+    <a href="javascript:void(0);" class="nav-item" onclick="showSection('comments')">Comentários</a>
+</div>
 
+<!-- Seções dinâmicas -->
+<!-- Publicações - visível por padrão -->
+<div id="publications" class="profile-section" style="display: block;">
+    {% for post in posts %}
+        <div class="post-item">
+            <h4>{{ post.title }}</h4>
+            <p>{{ post.description|slice:":50"|safe }}...</p>
+            <a href="{% url 'post_detail' id=post.id %}" class="btn">Ver Publicação</a>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Comentários - oculto por padrão -->
+    <!-- Comentários - oculto por padrão -->
+    <div id="comments" class="profile-section" style="display: none;">
+        {% for comment in comments %}
+            <div class="post-item">
+                <h4>{{ comment.post.title }}</h4>
+                <p>{{ comment.body|safe }}...</p>
+                <a href="{% url 'post_detail' id=comment.post.id %}" class="btn">Ver Publicação</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 
 <!-- Scripts para alternar entre Publicações e Comentários -->
