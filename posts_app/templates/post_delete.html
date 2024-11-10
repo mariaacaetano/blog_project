@@ -3,7 +3,10 @@
 {% block content %}
 <form method="post">
     {% csrf_token %}
-    <p>Deseja deletar esse post ?</p>
+    <p>Deseja deletar esse post?</p>
     <button class="btn btn-danger" type="submit">Deletar</button>
-</form> 
-{% endblock content %}
+</form>
+
+<!-- Botão Voltar -->
+<a href="{{ request.META.HTTP_REFERER }}" class="btn btn-info">Voltar</a>
+{% endblock %}

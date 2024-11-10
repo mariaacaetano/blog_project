@@ -96,9 +96,10 @@
 		</script>
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
-		<a href="{% url 'post_create' %}" class="floating-button">
+		<a href="{% if user.is_authenticated %}{% url 'post_create' %}{% else %}{% url 'signup' %}?message=Cadastre-se%20agora%20mesmo%20para%20escrever%20posts%20incríveis{% endif %}" class="floating-button">
 			+
 		</a>
+		
 
 		<footer class="jumbotron p-2 p-md-5 text-center" style="display:flex; padding-top: 50px; justify-content: center">
 			<a href="#">Back to top</a> 
