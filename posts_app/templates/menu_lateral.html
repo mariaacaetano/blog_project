@@ -1,33 +1,21 @@
-<!-- sidebar.html -->
 {% load static %}
 
 <!-- Ícone para abrir/fechar o menu -->
-<div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+<div class="menu-icon" onclick="toggleMenu()" aria-label="Abrir menu">&#9776;</div>
 
 <!-- Menu lateral -->
 <div class="sidebar" id="sidebar">
     <ul class="menu-list">
-        <!-- Iterar sobre as tags e exibir ícones e nomes -->
-        {% for tag in tags %}
-            <li class="tag-item">
-                <a href="#{{ tag.tag_name|lower }}">{{ tag.tag_name }}</a>
-                {% if tag.tag_icon %}
-                    <img src="{{ tag.tag_icon.url }}" alt="{{ tag.tag_name }} Icon" class="tag-icon">
-                {% endif %}
-            </li>
-        {% endfor %}
-        
-        <li><a href="#sobre-nos">Sobre Nós</a></li>
-        <li><a href="#contato">Contato</a></li>
+        <li><a href="{% url 'pages_entretenimento' %}" onclick="toggleMenu()">Entretenimento</a></li>
+        <li><a href="#sobre-nos" onclick="toggleMenu()">Sobre Nós</a></li>
+        <li><a href="#contato" onclick="toggleMenu()">Contato</a></li>
         
         <!-- Item para is_staff -->
         {% if user.is_staff %}
-            <li class="configurations"><a href="#configuracoes">Configurações</a></li>
+            <li class="configurations"><a href="#configuracoes" onclick="toggleMenu()">Configurações</a></li>
         {% endif %}
     </ul>
 </div>
-
-
 
 <style>
     /* Estilos para o ícone do menu */

@@ -4,10 +4,50 @@
 {% block content %}
 <div class="edit-profile-container">
     <h1>Editar Informações do Perfil</h1>
-    <form method="post" id="profile-info-form">
+    <form method="POST" action="{% url 'edit_profile_info' %}">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Salvar Alterações</button>
+        
+        <!-- Campos do usuário nativo -->
+        <div class="form-group">
+            <label for="username">Nome de Usuário:</label>
+            <input type="text" id="username" name="username" value="{{ form.username.value }}" disabled class="form-control">
+        </div>
+    
+        <div class="form-group">
+            <label for="first_name">Primeiro Nome:</label>
+            <input type="text" id="first_name" name="first_name" value="{{ form.first_name.value }}" class="form-control">
+        </div>
+    
+        <div class="form-group">
+            <label for="last_name">Último Nome:</label>
+            <input type="text" id="last_name" name="last_name" value="{{ form.last_name.value }}" class="form-control">
+        </div>
+    
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="{{ form.email.value }}" class="form-control">
+        </div>
+    
+        <!-- Campos do perfil -->
+        <div class="form-group">
+            <label for="bio">Biografia:</label>
+            <textarea id="bio" name="bio" class="form-control">{{ form.bio.value }}</textarea>
+        </div>
+    
+        <div class="form-group">
+            <label for="date_of_birth">Data de Nascimento:</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" value="{{ form.date_of_birth.value }}" class="form-control">
+            <small>Data atual: {{ user.profile.date_of_birth }}</small>  <!-- Mostrar data de nascimento atual -->
+        </div>
+    
+        <div class="form-group">
+            <label for="favorite_song">Música Favorita:</label>
+            <input type="text" id="favorite_song" name="favorite_song" value="{{ form.favorite_song.value }}" class="form-control">
+        </div>
+    
+        <button type="submit" class="btn btn-primary">Salvar alterações</button>
     </form>
+    
+    
 </div>
 {% endblock %}

@@ -12,7 +12,7 @@ from django.contrib.auth import login
 from django.shortcuts import redirect
 from django.views import generic
 from .models import Posts, Comments, Profile, Like, CommentLike, Follow
-from .forms import PostsForm, UserProfileForm, ProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm, CustomUserCreationForm
+from .forms import PostsForm, UserProfileForm, ProfilePictureForm, ProfileEditForm, CommentsForm, CustomUserCreationForm
 
 
 # Create your views here.# views.py
@@ -313,3 +313,35 @@ def unfollow_user(request, username):
 
     # Redireciona de volta para o perfil do autor
     return redirect('author_profile', username=username)
+
+
+
+
+
+
+
+
+
+
+
+
+
+def pages_entretenimento(request):
+    template_name = 'post_pages/entretenimento.html'
+    
+    # Busca a tag "Entretenimento" no banco de dados
+    entretenimento_tag = get_object_or_404(PostTag, tag_name="ENTRETENIMENTO")
+    
+     # Verifica se há um termo de busca
+    search_query = request.GET.get('search', '')
+    
+    # Filtra os posts que possuem a tag de entretenimento
+    posts = Posts.objects.filter(tag=entretenimento_tag)  # Corrigido
+    if search_query:
+        posts = posts.filter(title__icontains=search_query)
+    
+    context = {
+        'posts': posts,
+    }
+    
+    return render(request, template_name, context)
