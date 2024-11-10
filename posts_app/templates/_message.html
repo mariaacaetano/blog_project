@@ -1,6 +1,17 @@
 {% if messages %}
 <div class="space-y-2 p-4 fixed top-5 right-5 z-50">
     {% for message in messages %}
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div {% if message.tags %} class="alert {{ message.tags }}{% endif %}" role="alert">
+                <p>{{ message }}</p>
+                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
     <div
         class="p-2 rounded-lg flex items-center transition duration-300 ease-in-out transform hover:scale-105
         {% if message.tags == 'success' %}

@@ -67,8 +67,8 @@ class Profile(models.Model):
     favorite_song = models.CharField(max_length=255, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     temp_profile_picture = models.ImageField(upload_to='temp_profile_pics/', null=True, blank=True)  # Campo temporário
-    followers = models.ManyToManyField(User, related_name='followers_set', blank=True)  # Relacionamento com seguidores
-    following = models.ManyToManyField(User, related_name='following_set', blank=True)  # Relacionamento com pessoas que o usuário segue
+    following = models.ManyToManyField(User, related_name='profile_following')
+    followers = models.ManyToManyField(User, related_name='profile_followers')
 
     def __str__(self):
         return self.user.username

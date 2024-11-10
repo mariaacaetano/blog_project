@@ -177,30 +177,30 @@ class SignUpView(generic.CreateView):
 
 @login_required
 def profile_view(request, username=None):
-    if username is None:
-        username = request.user.username
-    
-    user = get_object_or_404(User, username=username)
-    profile = user.profile  # Obtendo o perfil associado ao usuário
-    posts = Posts.objects.filter(author=user)  # Obtendo posts feitos pelo usuário
+    # Se o 'username' for fornecido, obtém o perfil do outro usuário, senão o usuário logado
+    if username:
+        user = get_object_or_404(User, username=username)
+    else:
+        user = request.user
+
+    profile = user.profile  # Obtém o perfil do usuário
+
+    # Contadores de seguidores e seguidos
+    followers_count = profile.followers.count()
+    following_count = profile.following.count()
+
+    # Obter as publicações e comentários do usuário
+    posts = Posts.objects.filter(author=user)
     comments = Comments.objects.filter(author=user)
 
-    # Obtendo seguidores e seguidos
-    followers = user.profile.followers.all()  # Acessando a lista de seguidores
-    following = user.profile.following.all()  # Acessando a lista de pessoas que o usuário está seguindo
-    
-    followers_count = user.followers.count()  # Seguindo a relação "followers"
-    following_count = user.following.count()  # Seguindo a relação "following"
-
+    # Passa as informações para o template
     return render(request, 'profile.html', {
         'user': user,
         'profile': profile,
+        'followers_count': followers_count,
+        'following_count': following_count,
         'posts': posts,
-        'comments': comments,
-        'followers': followers,
-        'following': following,
-        'followers_count': followers_count,  # Adicionando contagem de seguidores
-        'following_count': following_count   # Adicionando contagem de seguidos
+        'comments': comments
     })
 
 
@@ -257,66 +257,64 @@ def like_comment(request, comment_id):
 
 
 
+
+# Exibe o perfil do autor e verifica se o usuário logado está seguindo
 def author_profile(request, username):
-    # Obtém o perfil do autor com base no 'username' fornecido na URL
     author = get_object_or_404(User, username=username)
     author_profile = author.profile
 
     # Verifica se o usuário logado está seguindo o autor
     is_following = request.user.profile.following.filter(id=author.id).exists()
 
-    # Obtém as publicações feitas pelo autor
+    # Obtém as publicações e comentários feitos pelo autor
     posts = Posts.objects.filter(author=author)
     post_count = posts.count()
     comments = Comments.objects.filter(author=author)
 
     # Passa para o template as informações do autor e se está seguindo ou não
+    # Dentro da view author_profile
+
     return render(request, 'author_profile.html', {
         'author': author,
         'author_profile': author_profile,
         'is_following': is_following,
         'posts': posts,
         'post_count': post_count,
-        'comments':comments
+        'comments': comments,
+        'user_to_unfollow': author  # Passe o autor como user_to_unfollow
     })
 
 
-    
 @login_required
 def follow_user(request, username):
-    user_to_follow = get_object_or_404(User, username=username)
+    author = get_object_or_404(User, username=username)  # Obtém o autor do perfil
+    if author == request.user:  # Não pode seguir a si mesmo
+        messages.error(request, 'Não pode seguir a si mesmo.')
+        return redirect('author_profile', username=username)  # Redireciona de volta para o perfil do autor
+
     profile = request.user.profile
-
-    # Seguir ou deixar de seguir
-    if user_to_follow in profile.following.all():
-        profile.following.remove(user_to_follow)
+    if author in profile.following.all():
+        # Se já está seguindo, então desfaz o seguimento
+        profile.following.remove(author)
+        messages.success(request, f'Você deixou de seguir {author.username}.')
     else:
-        profile.following.add(user_to_follow)
+        # Se não está seguindo, adiciona ao seguimento
+        profile.following.add(author)
+        messages.success(request, f'Agora você segue {author.username}.')
 
-    return redirect('profile', username=user_to_follow.username)
-
-
-
+    return redirect('author_profile', username=username)
+    
+# Função para deixar de seguir um usuário
 @login_required
 def unfollow_user(request, username):
-    # Obtém o usuário a ser deixado de seguir
     user_to_unfollow = get_object_or_404(User, username=username)
-
-    # Verificar se o usuário logado está tentando deixar de seguir alguém que não é ele mesmo
+    
+    # Verifica se o usuário logado está tentando deixar de seguir a si mesmo
     if request.user != user_to_unfollow:
-        # Encontrar a relação de follow entre o usuário logado e o usuário a ser deixado de seguir
-        follow = Follow.objects.filter(follower=request.user, followed=user_to_unfollow).first()
-        
-        # Se existir essa relação, deletar
-        if follow:
-            follow.delete()  # Remove o seguimento
+        request.user.profile.following.remove(user_to_unfollow)
+        user_to_unfollow.profile.followers.remove(request.user)
 
-    # Redireciona de volta para o perfil do autor
-    return redirect('author_profile', username=username)
-
-
-
-
+    return redirect('profile', username=user_to_unfollow.username)  # Redireciona para o perfil do usuário
 
 
 

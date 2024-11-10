@@ -25,7 +25,7 @@ urlpatterns = [
     path('ckeditor/', include('ckeditor_uploader.urls')),  
     path('logout/', LogoutView.as_view(), name='logout'),
     path('follow/<str:username>/', views.follow_user, name='follow_user'),
-    path('unfollow/<str:username>/', views.unfollow_user, name='unfollow'),
+    path('unfollow/<str:username>/', views.unfollow_user, name='unfollow_user'),
     path('profile/<str:username>/', views.author_profile, name='author_profile'),
     
     
