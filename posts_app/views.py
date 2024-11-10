@@ -296,13 +296,19 @@ def follow_user(request, username):
     if author in profile.following.all():
         # Se já está seguindo, então desfaz o seguimento
         profile.following.remove(author)
+        author.profile.followers.remove(request.user)  # Remove da lista de seguidores do autor
         messages.success(request, f'Você deixou de seguir {author.username}.')
     else:
         # Se não está seguindo, adiciona ao seguimento
         profile.following.add(author)
+        author.profile.followers.add(request.user)  # Adiciona à lista de seguidores do autor
         messages.success(request, f'Agora você segue {author.username}.')
 
-    return redirect('author_profile', username=username)
+    # Atualiza os contadores (seguindo e seguidores)
+    author.profile.save()  # Salva as alterações no perfil do autor
+    profile.save()  # Salva as alterações no perfil do usuário logado
+
+    return redirect('author_profile', username=username) 
     
 # Função para deixar de seguir um usuário
 @login_required
