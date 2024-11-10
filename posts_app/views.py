@@ -140,14 +140,22 @@ def post_delete(request, id):
         messages.error(request, 'Você não tem permissão para deletar este post.')
         return redirect('post_list')  # Redireciona para a lista de posts, ou outra página
 
+    # Se a requisição for do tipo POST
     if request.method == 'POST':
+        # Remove a imagem associada ao post (se houver)
         if post.image and os.path.isfile(os.path.join(settings.MEDIA_ROOT, post.image.path)):
             os.remove(os.path.join(settings.MEDIA_ROOT, post.image.path))
         
         post.delete()
+
+        # Se a requisição for AJAX, retorna uma resposta JSON
+        if request.is_ajax():
+            return JsonResponse({'success': True})
+
+        # Caso contrário, mostra a mensagem de sucesso e redireciona para a lista de posts
         messages.success(request, 'O post foi deletado com sucesso.')
         return HttpResponseRedirect(reverse('post_list'))
-    
+
     return render(request, 'post_delete.html', {'post': post})
 
 

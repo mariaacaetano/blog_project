@@ -1,12 +1,7 @@
 {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
-            <div class="alert 
-                {% if 'success' in message.tags %}alert-success{% endif %}
-                {% if 'error' in message.tags %}alert-error{% endif %}
-                {% if 'info' in message.tags %}alert-info{% endif %}
-                {% if 'warning' in message.tags %}alert-warning{% endif %}
-            ">
+            <div class="alert">
                 {{ message }}
             </div>
         {% endfor %}
@@ -32,41 +27,19 @@
         display: flex;  /* Usando Flexbox para alinhamento horizontal */
         justify-content: flex-start;  /* Coloca a mensagem à esquerda */
         align-items: center;  /* Alinha os itens verticalmente no centro */
-        background-color: #f0f0f0;  /* Cor de fundo padrão */
         border-color: #ccc;  /* Cor da borda */
         padding: 10px;  /* Espaçamento interno */
         border-radius: 8px;  /* Bordas arredondadas */
         margin-bottom: 10px;  /* Espaçamento entre as mensagens */
-        position: relative;  /* Definido para o botão absoluto */
+        position: fixed;  /* Definido para o botão absoluto */
+        bottom: 20px;    /* Ajuste a distância do fundo da tela */
+        left: 50%;       /* Centraliza a mensagem horizontalmente */
+        transform: translateX(-50%); /* Centraliza perfeitamente */
+        background-color: rgba(0, 0, 0, 0.7); /* Fundo semitransparente */
+        color: white;    /* Cor do texto */
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 9999;   /* Garante que a mensagem ficará sobre os outros elementos */
+        font-size: 16px;
     }
-    
-        /* Estilos para mensagens de sucesso */
-    .alert-success {
-        color: #155724;
-        background-color: #d4edda;
-        border-color: #c3e6cb;
-    }
-
-    /* Estilos para mensagens de erro */
-    .alert-error {
-        color: #721c24;
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-    }
-
-    /* Estilos para mensagens de informação */
-    .alert-info {
-        color: #0c5460;
-        background-color: #d1ecf1;
-        border-color: #bee5eb;
-    }
-
-    /* Estilos para mensagens de aviso */
-    .alert-warning {
-        color: #856404;
-        background-color: #fff3cd;
-        border-color: #ffeeba;
-}
-    
-
 </style>
