@@ -1,59 +1,18 @@
 {% if messages %}
 <div class="space-y-2 p-4 fixed top-5 right-5 z-50">
     {% for message in messages %}
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div {% if message.tags %} class="alert {{ message.tags }}{% endif %}" role="alert">
-                <p>{{ message }}</p>
-                <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-
-    <div
-        class="p-2 rounded-lg flex items-center transition duration-300 ease-in-out transform hover:scale-105
-        {% if message.tags == 'success' %}
-            bg-green-100 dark:bg-green-900 border-l-4 border-green-500 dark:border-green-700 text-green-900 dark:text-green-100
-        {% elif message.tags == 'info' %}
-            bg-blue-100 dark:bg-blue-900 border-l-4 border-blue-500 dark:border-blue-700 text-blue-900 dark:text-blue-100
-        {% elif message.tags == 'warning' %}
-            bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 dark:border-yellow-700 text-yellow-900 dark:text-yellow-100
-        {% elif message.tags == 'error' %}
-            bg-red-100 dark:bg-red-900 border-l-4 border-red-500 dark:border-red-700 text-red-900 dark:text-red-100
-        {% endif %}
-        "
-    >
-        <svg
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            fill="none"
-            class="h-5 w-5 flex-shrink-0 mr-2
-            {% if message.tags == 'success' %} text-green-600
-            {% elif message.tags == 'info' %} text-blue-600
-            {% elif message.tags == 'warning' %} text-yellow-600
-            {% elif message.tags == 'error' %} text-red-600
-            {% endif %}
-            "
-            xmlns="http://www.w3.org/2000/svg"
-        >
-            <path
-                d="M13 16h-1v-4h1m0-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                stroke-width="2"
-                stroke-linejoin="round"
-                stroke-linecap="round"
-            ></path>
-        </svg>
-        <p class="text-xs font-semibold">{{ message }}</p>
-    </div>
+        <div class="alert {{ message.tags }} p-2 border rounded-md relative">
+            <p class="text-sm">{{ message }}</p>
+            <button class="close-btn" onclick="this.parentElement.style.display='none';">&times;</button>
+        </div>
     {% endfor %}
 </div>
 {% endif %}
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const messages = document.querySelectorAll(".messages div[role='alert']");
+        const messages = document.querySelectorAll(".alert");
         messages.forEach((message) => {
             setTimeout(() => {
                 message.style.opacity = "0";
@@ -62,3 +21,49 @@
         });
     });
 </script>
+
+<style>
+
+    .alert {
+        display: flex;  /* Usando Flexbox para alinhamento horizontal */
+        justify-content: flex-start;  /* Coloca a mensagem à esquerda */
+        align-items: center;  /* Alinha os itens verticalmente no centro */
+        background-color: #f0f0f0;  /* Cor de fundo padrão */
+        border-color: #ccc;  /* Cor da borda */
+        padding: 10px;  /* Espaçamento interno */
+        border-radius: 8px;  /* Bordas arredondadas */
+        margin-bottom: 10px;  /* Espaçamento entre as mensagens */
+        position: relative;  /* Definido para o botão absoluto */
+    }
+    
+    .alert.success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+    
+    .alert.warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+    }
+    
+    .alert.error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+    
+    .close-btn {
+        background: transparent;  /* Sem fundo no botão */
+        border: none;  /* Remove a borda do botão */
+        font-size: 20px;  /* Tamanho do 'x' */
+        cursor: pointer;  /* Indica que é clicável */
+        color: #333;  /* Cor do 'x' */
+        padding: 0;  /* Remove o padding do botão */
+        line-height: 1;  /* Alinha verticalmente o 'x' */
+        position: absolute;  /* Posiciona o botão no canto direito */
+        top: 50%;  /* Centraliza verticalmente o 'x' */
+        right: 10px;  /* Coloca o 'x' no extremo direito */
+        transform: translateY(-50%);  /* Ajuste para centralizar verticalmente */
+    }
+    
+
+</style>
