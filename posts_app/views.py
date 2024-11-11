@@ -368,8 +368,6 @@ def pages_entretenimento(request):
     template_name = 'post_pages/entretenimento.html'
     entretenimento_tag = get_object_or_404(PostTag, tag_name="ENTRETENIMENTO")
     posts = Posts.objects.filter(tag=entretenimento_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }
@@ -379,8 +377,6 @@ def pages_ciencia(request):
     template_name = 'post_pages/ciencia.html'
     ciencia_tag = get_object_or_404(PostTag, tag_name="CIENCIA")
     posts = Posts.objects.filter(tag=ciencia_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }
@@ -390,8 +386,6 @@ def pages_cultura(request):
     template_name = 'post_pages/cultura.html'
     cultura_tag = get_object_or_404(PostTag, tag_name="CULTURA")
     posts = Posts.objects.filter(tag=cultura_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }
@@ -401,8 +395,6 @@ def pages_design(request):
     template_name = 'post_pages/design.html'
     design_tag = get_object_or_404(PostTag, tag_name="DESIGN")
     posts = Posts.objects.filter(tag=design_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }
@@ -412,8 +404,6 @@ def pages_educacao(request):
     template_name = 'post_pages/educacao.html'
     educacao_tag = get_object_or_404(PostTag, tag_name="EDUCACAO")
     posts = Posts.objects.filter(tag=educacao_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }
@@ -423,8 +413,6 @@ def pages_politica(request):
     template_name = 'post_pages/politica.html'
     politica_tag = get_object_or_404(PostTag, tag_name="POLITICA")
     posts = Posts.objects.filter(tag=politica_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }
@@ -434,8 +422,6 @@ def pages_saude(request):
     template_name = 'post_pages/saude.html'
     saude_tag = get_object_or_404(PostTag, tag_name="SAUDE")
     posts = Posts.objects.filter(tag=saude_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }
@@ -445,8 +431,6 @@ def pages_tecnologia(request):
     template_name = 'post_pages/tecnologia.html'
     tecnologia_tag = get_object_or_404(PostTag, tag_name="TECNOLOGIA")
     posts = Posts.objects.filter(tag=tecnologia_tag)  
-    if search_query:
-        posts = posts.filter(title__icontains=search_query)
     context = {
         'posts': posts,
     }

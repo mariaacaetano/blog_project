@@ -3,8 +3,12 @@
 {% extends 'base.html' %}
 {% load static%}
 
-{% block title %}Ciência{% endblock %}
+{% block title %}Post | Educação{% endblock %}
 
+{% block content %}
+<header style="margin-bottom:30px">
+	<a href="{{ request.META.HTTP_REFERER }}" class="btn btn-info">Voltar para Home</a>
+</header>
 	<div class="row row-cols-1 row-cols-md-3 g-4" style="padding-top: 20px;">
 		{% for post in posts %} 
 		<div class="col">
