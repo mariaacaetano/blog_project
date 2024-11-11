@@ -375,7 +375,7 @@ def pages_entretenimento(request):
 
 def pages_ciencia(request):
     template_name = 'post_pages/ciencia.html'
-    ciencia_tag = get_object_or_404(PostTag, tag_name="CIENCIA")
+    ciencia_tag = get_object_or_404(PostTag, tag_name="CIÊNCIA")
     posts = Posts.objects.filter(tag=ciencia_tag)  
     context = {
         'posts': posts,
@@ -402,7 +402,7 @@ def pages_design(request):
 
 def pages_educacao(request):
     template_name = 'post_pages/educacao.html'
-    educacao_tag = get_object_or_404(PostTag, tag_name="EDUCACAO")
+    educacao_tag = get_object_or_404(PostTag, tag_name="EDUCAÇÃOO")
     posts = Posts.objects.filter(tag=educacao_tag)  
     context = {
         'posts': posts,
@@ -411,7 +411,7 @@ def pages_educacao(request):
 
 def pages_politica(request):
     template_name = 'post_pages/politica.html'
-    politica_tag = get_object_or_404(PostTag, tag_name="POLITICA")
+    politica_tag = get_object_or_404(PostTag, tag_name="POLÍTICA")
     posts = Posts.objects.filter(tag=politica_tag)  
     context = {
         'posts': posts,
@@ -420,7 +420,7 @@ def pages_politica(request):
 
 def pages_saude(request):
     template_name = 'post_pages/saude.html'
-    saude_tag = get_object_or_404(PostTag, tag_name="SAUDE")
+    saude_tag = get_object_or_404(PostTag, tag_name="SAÚDE")
     posts = Posts.objects.filter(tag=saude_tag)  
     context = {
         'posts': posts,

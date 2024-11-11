@@ -75,40 +75,39 @@
 
                 
         <div id="followers" class="profile-section">
-            {% for follower in followers %}
-                <div class="follower">
-                    <div class="follower-image">
-                        {% if follower.profile.profile_picture %}
-                            <img src="{{ follower.profile.profile_picture.url }}" alt="Foto de perfil" class="follower-img">
-                        {% else %}
-                            <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="follower-img">
-                        {% endif %}
+                {% for follower in followers %}
+                    <div class="follower">
+                        <div class="follower-image">
+                            {% if follower.profile.profile_picture %}
+                                <img src="{{ follower.profile.profile_picture.url }}" alt="Foto de perfil" class="follower-img">
+                            {% else %}
+                                <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="follower-img">
+                            {% endif %}
+                        </div>
+                        <div class="follower-info">
+                            <p><a href="{% url 'author_profile' username=follower.username %}">@{{ follower.username }}</a></p>
+                            <p>{{ follower.profile.bio|slice:":20" }}...</p>
+                        </div>
                     </div>
-                    <div class="follower-info">
-                        <p>@{{ follower.username }}</p>
-                        <p>{{ follower.profile.bio|slice:":20" }}...</p>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
         
         <div id="following" class="profile-section">
             {% for followed in following %}
-                <div class="followed">
-                    <div class="followed-image">
+                <div class="follower">
+                    <div class="follower-image">
                         {% if followed.profile.profile_picture %}
                             <img src="{{ followed.profile.profile_picture.url }}" alt="Foto de perfil" class="followed-img">
                         {% else %}
                             <img src="{% static 'images/default.jpg' %}" alt="Foto de perfil padrão" class="followed-img">
                         {% endif %}
                     </div>
-                    <div class="followed-info">
-                        <p>@{{ followed.username }}</p>
+                    <div class="follower-info">
+                        <p><a href="{% url 'author_profile' username=followed.username %}">@{{ followed.username }}</a></p>
                         <p>{{ followed.profile.bio|slice:":20" }}...</p>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            {% endfor %}    
         
     <!-- Scripts para alternar entre Publicações e Comentários -->
 

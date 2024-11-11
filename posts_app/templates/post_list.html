@@ -33,19 +33,21 @@
 				<img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="width: 100%; height: 150px; object-fit: cover;">
 				<div class="card-body">
 					{% if post.tag.tag_name == "CIÊNCIA" %}
-						<p class="card-text" style="font-size: 13px; color: #e74c3c"><span class="badge bg-info">{{ post.tag }}</span></p>
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-info">{{ post.tag }}</span></p>
 					{% elif post.tag.tag_name == "CULTURA" %}
-						<p class="card-text" style="font-size: 13px; color: #9b59b6"><span class="badge bg-warning">{{ post.tag }}</span></p>
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-info">{{ post.tag }}</span></p>
 					{% elif post.tag.tag_name == "EDUCAÇÃO" %}
-						<p class="card-text" style="font-size: 13px; color: #5dade2"><span class="badge bg-warning">{{ post.tag }}</span></p>
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-warning">{{ post.tag }}</span></p>
 					{% elif post.tag.tag_name == "ENTRETENIMENTO" %}
-						<p class="card-text" style="font-size: 13px; color: #45b39d"><span class="badge bg-warning">{{ post.tag }}</span></p>
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-danger">{{ post.tag }}</span></p>
 					{% elif post.tag.tag_name == "DESIGN" %}
-						<p class="card-text" style="font-size: 13px; color: #f4d03f"><span class="badge bg-warning">{{ post.tag }}</span></p>
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-dark">{{ post.tag }}</span></p>
 					{% elif post.tag.tag_name == "SAÚDE" %}
-						<p class="card-text" style="font-size: 13px; color: #eb984e"><span class="badge bg-warning">{{ post.tag }}</span></p>
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-success">{{ post.tag }}</span></p>
+					{% elif post.tag.tag_name == "POLÍTICA" %}
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-secondary">{{ post.tag }}</span></p>
 					{% elif post.tag.tag_name == "TECNOLOGIA" %}
-						<p class="card-text" style="font-size: 13px; color: #1abc9c"><span class="badge bg-warning">{{ post.tag }}</span></p>
+						<p class="card-text" style="font-size: 13px"><span class="badge bg-primary">{{ post.tag }}</span></p>
 					{% endif %}
 					<h3 class="card-text"><strong>{{ post.title }}</strong></h3>
 					<p class="card-text" style="font-size:13px">{{ post.create_at }}</p>
