@@ -15,6 +15,7 @@
           <label class="form-label">
             <input type="text" name="username" id="username" class="form-label" placeholder="Username" required="" autofocus="" style="width: 300px;">
           </label>
+          
         <!-- Campo de senha -->
         <div>
           <label class="form-label">
@@ -23,7 +24,7 @@
         </div>
       
         {% csrf_token %} 
-        <button class="button" type="submit">Login</button>
+          <button class="button" type="submit">Login</button>
         </div>
         <div style="padding-top: 20px; display: inline-block;">
           <p class="signin">Não tem uma conta ainda? <a href="{% url 'signup' %}"> Cadastre-se</a>. </p>
