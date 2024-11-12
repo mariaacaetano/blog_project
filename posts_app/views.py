@@ -147,10 +147,6 @@ def post_delete(request, id):
         
         post.delete()
 
-        # Se a requisição for AJAX, retorna uma resposta JSON
-        if request.is_ajax():
-            return JsonResponse({'success': True})
-
         # Caso contrário, mostra a mensagem de sucesso e redireciona para a lista de posts
         messages.success(request, 'O post foi deletado com sucesso.')
         return HttpResponseRedirect(reverse('post_list'))
